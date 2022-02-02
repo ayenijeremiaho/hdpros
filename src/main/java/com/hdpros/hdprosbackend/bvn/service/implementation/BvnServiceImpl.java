@@ -4,6 +4,7 @@ import com.hdpros.hdprosbackend.bvn.dto.*;
 import com.hdpros.hdprosbackend.bvn.model.BvnDetails;
 import com.hdpros.hdprosbackend.bvn.repository.BvnDetailsRepository;
 import com.hdpros.hdprosbackend.bvn.service.BvnService;
+import com.hdpros.hdprosbackend.exceptions.GeneralException;
 import com.hdpros.hdprosbackend.providers.paystack.PaystackService;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +42,11 @@ public class BvnServiceImpl implements BvnService {
             }
         }
         return failedBVNVerification();
+    }
+
+    @Override
+    public BvnDetails getBvnDetailsById(Long id){
+        return bvnDetailsRepository.findById(id).orElseThrow(() -> new GeneralException("Invalid BVN Id"));
     }
 
     //create bvn details in preparation to save

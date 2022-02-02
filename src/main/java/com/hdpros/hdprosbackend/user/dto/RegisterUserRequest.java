@@ -19,7 +19,7 @@ public class RegisterUserRequest {
     private String lastName;
 
     @Pattern(regexp = ".+@.+\\.[a-z]+", message = "Invalid email")
-    private String emailAddress;
+    private String email;
 
     private String phoneNumber;
 

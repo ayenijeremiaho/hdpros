@@ -1,13 +1,16 @@
 package com.hdpros.hdprosbackend.user.model;
 
+import com.cloudinary.utils.ObjectUtils;
 import com.hdpros.hdprosbackend.bvn.model.BvnDetails;
-import com.hdpros.hdprosbackend.image.model.ProfileImage;
+import com.hdpros.hdprosbackend.image.model.Image;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Collections;
+import java.util.List;
 
 @Data
-@Entity
+@Entity(name = "users")
 public class User {
 
     @Id
@@ -34,7 +37,14 @@ public class User {
     @OneToOne(fetch = FetchType.LAZY)
     private BvnDetails bvnDetails;
 
-    @OneToOne()
-    private ProfileImage profileImage;
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Image> images;
 
+    public void setImages(Image image) {
+        this.images = Collections.singletonList(image);
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
 }

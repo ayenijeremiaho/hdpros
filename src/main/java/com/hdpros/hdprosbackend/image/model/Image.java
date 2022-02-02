@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-public class ProfileImage {
+public class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +17,9 @@ public class ProfileImage {
 
     private String publicId;
 
-    @OneToOne
+    private boolean profileImage = false;
+
+    @ManyToOne
     private User user;
 
 }
