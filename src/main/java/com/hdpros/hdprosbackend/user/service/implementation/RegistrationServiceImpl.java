@@ -12,8 +12,11 @@ import com.hdpros.hdprosbackend.user.dto.RegisterUserResponse;
 import com.hdpros.hdprosbackend.user.model.User;
 import com.hdpros.hdprosbackend.user.service.RegistrationService;
 import com.hdpros.hdprosbackend.user.service.UserService;
+import com.hdpros.hdprosbackend.utils.GeneralUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -61,6 +64,10 @@ public class RegistrationServiceImpl implements RegistrationService {
             user.setBvnDetails(bvnDetails);
         }
 
+        //generate and set password
+        String password = GeneralUtil.generateRandomWord(10);
+        user.setPassword(new BCryptPasswordEncoder().encode(password));
+
         user = userService.saveUser(user);
 
         //verify image was uploaded and upload image
@@ -80,20 +87,20 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         Map<String, Object> map = new HashMap<>();
         map.put("userName", user.getEmail());
-        map.put("firstName", user.getFirstName());
-        map.put("lastName", user.getLastName());
+        map.put("name", user.getFirstName() + " " + user.getLastName());
+        map.put("password", password);
 
         if (request.isServiceProvider()) {
-            map.put("message", "Service Provider");
+            map.put("userType", "Service Provider");
         } else {
-            map.put("message", "Customer");
+            map.put("userType", "Customer");
         }
 
         //send mail to user
-        String[] copy = (String[]) mailingList.toArray();
+        String[] copy = mailingList.toArray(new String[0]);
 
         mailService.sendMail("New User Registration",
-                user.getEmail(), copy, map, "");
+                user.getEmail(), copy, map, "new_user");
 
         return RegisterUserResponse.builder().status("SUCCESSFUL").build();
     }

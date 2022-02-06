@@ -65,7 +65,7 @@ public class MailServiceImpl implements MailService {
                 mail.setMailTo(mailTo);
                 IContext context = new Context();
                 ((Context) context).setVariables(parameters);
-                mail.setMailContent(templateEngine.process("medusa/" + templateLocation, context));
+                mail.setMailContent(templateEngine.process("hdpros/" + templateLocation, context));
                 logger.debug("MAIL -> {}", mail.toString());
                 logger.info("Sending mail to ->{}", mail.getMailTo());
                 MimeMessagePreparator messagePreparator = mimeMessage -> {
