@@ -16,6 +16,7 @@ import java.util.Objects;
 
 @RestController
 @CrossOrigin
+@RequestMapping(value = "/api/v1/authenticate", method = RequestMethod.POST)
 public class JwtAuthenticationController {
 
     private final AuthenticationManager authenticationManager;
@@ -30,7 +31,7 @@ public class JwtAuthenticationController {
         this.jwtInMemoryUserDetailsService = jwtInMemoryUserDetailsService;
     }
 
-    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
+    @PostMapping()
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest)
             throws Exception {
 
