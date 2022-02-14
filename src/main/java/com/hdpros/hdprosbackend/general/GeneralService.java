@@ -1,5 +1,6 @@
 package com.hdpros.hdprosbackend.general;
 
+import com.hdpros.hdprosbackend.user.model.User;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 
@@ -23,4 +24,6 @@ public interface GeneralService {
 
     //used to format success response body
     Response prepareSuccessResponse(Object data);
+
+    User getUser(String email);
 }

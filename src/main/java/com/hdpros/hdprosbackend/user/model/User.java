@@ -36,6 +36,8 @@ public class User {
 
     private boolean serviceProvider;
 
+    private boolean delFlag;
+
     @OneToOne(fetch = FetchType.LAZY)
     private BvnDetails bvnDetails;
 
