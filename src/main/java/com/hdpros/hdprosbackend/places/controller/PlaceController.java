@@ -5,6 +5,7 @@ import com.hdpros.hdprosbackend.general.Response;
 import com.hdpros.hdprosbackend.places.dto.PlaceDTO;
 import com.hdpros.hdprosbackend.places.service.PlaceService;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.security.Principal;
 import java.util.List;
@@ -22,7 +23,7 @@ public class PlaceController {
     }
 
     @PostMapping("/add")
-    public Response addPlace(Principal principal, @RequestBody PlaceDTO placeDTO) {
+    public Response addPlace(@ApiIgnore Principal principal, @RequestBody PlaceDTO placeDTO) {
         //update the email of the user to that of the logged-in user
         placeDTO.setEmail(principal.getName());
 
@@ -32,7 +33,7 @@ public class PlaceController {
     }
 
     @PostMapping("/update")
-    public Response updatePlace(Principal principal, @RequestBody PlaceDTO placeDTO) {
+    public Response updatePlace(@ApiIgnore Principal principal, @RequestBody PlaceDTO placeDTO) {
         //update the email of the user to that of the logged-in user
         placeDTO.setEmail(principal.getName());
 
@@ -42,14 +43,14 @@ public class PlaceController {
     }
 
     @PostMapping("/delete/{placeId}")
-    public Response deletePlace(Principal principal, @PathVariable Long placeId) {
+    public Response deletePlace(@ApiIgnore Principal principal, @PathVariable Long placeId) {
         boolean response = placeService.deletePlace(principal.getName(), placeId);
 
         return generalService.prepareSuccessResponse(response);
     }
 
     @PostMapping("/all")
-    public Response allPlaces(Principal principal) {
+    public Response allPlaces(@ApiIgnore Principal principal) {
         List<PlaceDTO> response = placeService.getPlacesForUser(principal.getName());
 
         return generalService.prepareSuccessResponse(response);
