@@ -13,12 +13,6 @@ import java.security.Principal;
 @CrossOrigin()
 public class HelloWorldController {
 
-    private final Authentication authentication;
-
-    public HelloWorldController(Authentication authentication) {
-        this.authentication = authentication;
-    }
-
     @RequestMapping({"/hello"})
     public String hello(Principal principal) {
         String message = "Logged in user => {}" + principal.getName();
