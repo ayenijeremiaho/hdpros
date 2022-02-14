@@ -3,18 +3,19 @@ package com.hdpros.hdprosbackend.utils.jwt.controller;
 import com.hdpros.hdprosbackend.utils.jwt.config.JwtTokenUtil;
 import com.hdpros.hdprosbackend.utils.jwt.dto.JwtRequest;
 import com.hdpros.hdprosbackend.utils.jwt.dto.JwtResponse;
+import com.hdpros.hdprosbackend.utils.jwt.service.JwtUserDetailsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
 @RestController
+@RequestMapping("/api/v1/authenticate")
 @CrossOrigin
 @RequestMapping(value = "/api/v1/authenticate", method = RequestMethod.POST)
 public class JwtAuthenticationController {
@@ -23,12 +24,12 @@ public class JwtAuthenticationController {
 
     private final JwtTokenUtil jwtTokenUtil;
 
-    private final UserDetailsService jwtInMemoryUserDetailsService;
+    private final JwtUserDetailsService jwtUserDetailsService;
 
-    public JwtAuthenticationController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserDetailsService jwtInMemoryUserDetailsService) {
+    public JwtAuthenticationController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, JwtUserDetailsService jwtUserDetailsService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
-        this.jwtInMemoryUserDetailsService = jwtInMemoryUserDetailsService;
+        this.jwtUserDetailsService = jwtUserDetailsService;
     }
 
     @PostMapping()
@@ -37,8 +38,7 @@ public class JwtAuthenticationController {
 
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
-        final UserDetails userDetails = jwtInMemoryUserDetailsService
-                .loadUserByUsername(authenticationRequest.getUsername());
+        final UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 
         final String token = jwtTokenUtil.generateToken(userDetails);
 
