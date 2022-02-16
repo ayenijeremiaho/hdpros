@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface PlaceRepository extends JpaRepository<Place, Long> {
+
     boolean existsByDescriptionAndUserAndDelFlag(String description, User user, boolean delFlag);
 
     int countAllByUserAndDelFlag(User user, boolean delFlag);

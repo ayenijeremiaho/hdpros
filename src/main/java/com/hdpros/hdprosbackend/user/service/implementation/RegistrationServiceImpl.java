@@ -9,14 +9,13 @@ import com.hdpros.hdprosbackend.image.service.ImageService;
 import com.hdpros.hdprosbackend.providers.cloudinary.CloudinaryService;
 import com.hdpros.hdprosbackend.user.dto.RegisterUserRequest;
 import com.hdpros.hdprosbackend.user.dto.RegisterUserResponse;
+import com.hdpros.hdprosbackend.user.service.UserService;
 import com.hdpros.hdprosbackend.user.model.User;
 import com.hdpros.hdprosbackend.user.service.RegistrationService;
-import com.hdpros.hdprosbackend.user.service.UserService;
 import com.hdpros.hdprosbackend.utils.GeneralUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

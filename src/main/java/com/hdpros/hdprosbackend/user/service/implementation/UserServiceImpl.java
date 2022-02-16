@@ -1,10 +1,10 @@
 package com.hdpros.hdprosbackend.user.service.implementation;
 
 import com.hdpros.hdprosbackend.exceptions.GeneralException;
-import com.hdpros.hdprosbackend.user.Repository.UserRepository;
 import com.hdpros.hdprosbackend.user.dto.RegisterUserRequest;
-import com.hdpros.hdprosbackend.user.model.User;
 import com.hdpros.hdprosbackend.user.service.UserService;
+import com.hdpros.hdprosbackend.user.Repository.UserRepository;
+import com.hdpros.hdprosbackend.user.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

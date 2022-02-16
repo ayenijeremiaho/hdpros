@@ -17,7 +17,7 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/api/v1/authenticate")
 @CrossOrigin
-@RequestMapping(value = "/api/v1/authenticate", method = RequestMethod.POST)
+//@RequestMapping(value = "/api/v1/authenticate", method = RequestMethod.POST)
 public class JwtAuthenticationController {
 
     private final AuthenticationManager authenticationManager;
