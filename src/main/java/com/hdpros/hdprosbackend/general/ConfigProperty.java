@@ -19,4 +19,13 @@ public class ConfigProperty {
 
     @Value("${paystack.bank.url}")
     private String paystackBankUrl;
+
+    @Value("${cloudinary.cloudName}")
+    private String cloudinaryCloudName;
+
+    @Value("${cloudinary.apiKey}")
+    private String cloudinaryApiKey;
+
+    @Value("${cloudinary.apiSecret}")
+    private String cloudinaryApiSecret;
 }
