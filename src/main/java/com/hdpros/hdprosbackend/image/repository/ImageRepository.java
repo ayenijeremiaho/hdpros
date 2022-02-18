@@ -8,4 +8,6 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     Image findByUrlAndUser_Id(String url, Long user_id);
 
     Image findByUrlAndProfileImageAndUser_Id(String url, boolean profileImage, Long user_id);
+
+//    Image findUrlAndRoomImageAndUser_Id(String url, boolean roomImage, Long room_id, Long user_id);
 }

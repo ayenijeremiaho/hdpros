@@ -6,6 +6,7 @@ import com.hdpros.hdprosbackend.booking.repository.BookingRepository;
 import com.hdpros.hdprosbackend.booking.service.BookingService;
 import com.hdpros.hdprosbackend.exceptions.GeneralException;
 import com.hdpros.hdprosbackend.general.GeneralService;
+import com.hdpros.hdprosbackend.room.model.Room;
 import com.hdpros.hdprosbackend.user.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -63,6 +64,8 @@ public class BookingServiceImpl implements BookingService {
         booking.setPlaceId(dto.getPlaceId());
         booking.setStartDate(dto.getStartDate());
         booking.setStartTime(dto.getStartTime());
+        booking.setJobStatus(dto.isJobStatus());
+        booking.setRooms((Room) dto.getRoomId());
 
         Booking updateBooking = bookingRepository.save(booking);
         return getBookingDTO(updateBooking);

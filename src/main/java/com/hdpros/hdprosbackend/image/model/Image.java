@@ -1,5 +1,6 @@
 package com.hdpros.hdprosbackend.image.model;
 
+import com.hdpros.hdprosbackend.room.model.Room;
 import com.hdpros.hdprosbackend.user.model.User;
 import lombok.Data;
 
@@ -19,7 +20,12 @@ public class Image {
 
     private boolean profileImage = false;
 
+    private boolean roomImage = false;
+
     @ManyToOne
     private User user;
+
+    @ManyToOne
+    private Room room;
 
 }
