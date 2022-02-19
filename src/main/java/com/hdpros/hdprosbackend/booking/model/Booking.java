@@ -28,7 +28,7 @@ public class Booking {
 
     private int placeId;
 
-    private boolean jobStatus;
+    private boolean jobStatus = false;
 
     @OneToOne(optional = false)
     private User user;

@@ -5,6 +5,7 @@ import com.hdpros.hdprosbackend.general.Response;
 import com.hdpros.hdprosbackend.room.dto.RoomDTO;
 import com.hdpros.hdprosbackend.room.service.RoomService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.security.Principal;
@@ -23,7 +24,7 @@ public class RoomController {
     }
 
     @PostMapping("/add")
-    public Response addRoom(@ApiIgnore Principal principal, @RequestBody RoomDTO roomDTO) {
+    public Response addRoom(@ApiIgnore Principal principal, @RequestBody RoomDTO roomDTO, @RequestParam(value = "avatar", required = false) MultipartFile file) {
         //update the email of the user to that of the logged-in user
         roomDTO.setEmail(principal.getName());
 
@@ -33,7 +34,7 @@ public class RoomController {
     }
 
     @PostMapping("/update")
-    public Response updateRoom(@ApiIgnore Principal principal, @RequestBody RoomDTO roomDTO) {
+    public Response updateRoom(@ApiIgnore Principal principal, @RequestBody RoomDTO roomDTO, @RequestParam(value = "avatar", required = false) MultipartFile file) {
         //update the email of the user to that of the logged-in user
         roomDTO.setEmail(principal.getName());
 

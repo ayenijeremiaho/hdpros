@@ -2,6 +2,9 @@ package com.hdpros.hdprosbackend.room.service.implementation;
 
 import com.hdpros.hdprosbackend.exceptions.GeneralException;
 import com.hdpros.hdprosbackend.general.GeneralService;
+import com.hdpros.hdprosbackend.image.model.Image;
+import com.hdpros.hdprosbackend.image.service.ImageService;
+import com.hdpros.hdprosbackend.providers.cloudinary.CloudinaryService;
 import com.hdpros.hdprosbackend.room.dto.RoomDTO;
 import com.hdpros.hdprosbackend.room.model.Room;
 import com.hdpros.hdprosbackend.room.repository.RoomRepository;
@@ -12,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -21,10 +25,14 @@ public class RoomServiceImpl implements RoomService {
 
     private final GeneralService generalService;
     private final RoomRepository roomRepository;
+    private final ImageService imageService;
+    private final CloudinaryService cloudinaryService;
 
-    public RoomServiceImpl(GeneralService generalService, RoomRepository roomRepository) {
+    public RoomServiceImpl(GeneralService generalService, RoomRepository roomRepository, ImageService imageService, CloudinaryService cloudinaryService) {
         this.generalService = generalService;
         this.roomRepository = roomRepository;
+        this.imageService = imageService;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @Override
@@ -45,6 +53,21 @@ public class RoomServiceImpl implements RoomService {
             room.setUser(user);
 
             roomRepository.save(room);
+
+            //verify image was uploaded
+            if (Objects.nonNull(dto.getFile())) {
+                Map<String, String> imageMap = cloudinaryService.upload(dto.getFile());
+
+                if (Objects.nonNull(imageMap)) {
+                    String publicId = imageMap.get("publicId");
+                    String imageUrl = imageMap.get("url");
+
+                    //save profile image
+                    Image image = imageService.saveRoomImage(publicId, imageUrl, user, room);
+                    room.setImages(image);
+                    roomRepository.save(room);
+                }
+            }
             return dto;
         }
         throw new GeneralException("room with description already created for user");
@@ -61,8 +84,24 @@ public class RoomServiceImpl implements RoomService {
         room.setCount(dto.getCount());
         room.setDescription(dto.getDescription());
         room.setRoomName(dto.getRoomName());
+        room.setPrice(dto.getPrice());
 
         Room updatedRoom = roomRepository.save(room);
+
+        //verify image was uploaded
+        if (Objects.nonNull(dto.getFile())) {
+            Map<String, String> imageMap = cloudinaryService.upload(dto.getFile());
+
+            if (Objects.nonNull(imageMap)) {
+                String publicId = imageMap.get("publicId");
+                String imageUrl = imageMap.get("url");
+
+                //save profile image
+                Image image = imageService.saveRoomImage(publicId, imageUrl, user, room);
+                room.setImages(image);
+                roomRepository.save(room);
+            }
+        }
         return getRoomDTO(updatedRoom);
     }
 

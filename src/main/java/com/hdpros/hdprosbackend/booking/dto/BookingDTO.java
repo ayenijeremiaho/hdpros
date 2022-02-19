@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 public class BookingDTO {
@@ -20,7 +21,7 @@ public class BookingDTO {
 
     private boolean jobStatus;
 
-    private int roomId;
+    private List<Long> roomId;
 
     private String email;
 
