@@ -2,7 +2,9 @@ package com.hdpros.hdprosbackend.booking.model;
 
 import com.hdpros.hdprosbackend.room.model.Room;
 import com.hdpros.hdprosbackend.user.model.User;
+import com.hdpros.hdprosbackend.utils.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -12,7 +14,8 @@ import java.util.List;
 
 @Data
 @Entity
-public class Booking {
+@EqualsAndHashCode(callSuper = true)
+public class Booking extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +33,7 @@ public class Booking {
 
     private boolean jobStatus = false;
 
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     private User user;
 
     private boolean delFlag = false;

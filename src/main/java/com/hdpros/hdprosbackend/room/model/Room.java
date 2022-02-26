@@ -2,7 +2,9 @@ package com.hdpros.hdprosbackend.room.model;
 
 import com.hdpros.hdprosbackend.image.model.Image;
 import com.hdpros.hdprosbackend.user.model.User;
+import com.hdpros.hdprosbackend.utils.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.Collections;
@@ -10,7 +12,8 @@ import java.util.List;
 
 @Data
 @Entity
-public class Room {
+@EqualsAndHashCode(callSuper = true)
+public class Room extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +27,7 @@ public class Room {
 
     private String description;
 
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     private User user;
 
     private boolean delFlag = false;

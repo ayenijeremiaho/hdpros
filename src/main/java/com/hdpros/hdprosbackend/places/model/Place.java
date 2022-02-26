@@ -1,13 +1,16 @@
 package com.hdpros.hdprosbackend.places.model;
 
 import com.hdpros.hdprosbackend.user.model.User;
+import com.hdpros.hdprosbackend.utils.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 
 @Data
 @Entity
-public class Place {
+@EqualsAndHashCode(callSuper = true)
+public class Place extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +24,7 @@ public class Place {
 
     private String description;
 
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     private User user;
 
     private boolean delFlag = false;

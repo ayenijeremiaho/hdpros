@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -51,6 +52,7 @@ public class RoomServiceImpl implements RoomService {
             Room room = new Room();
             BeanUtils.copyProperties(dto, room);
             room.setUser(user);
+            room.setCreatedAt(LocalDateTime.now());
 
             roomRepository.save(room);
 
@@ -85,6 +87,7 @@ public class RoomServiceImpl implements RoomService {
         room.setDescription(dto.getDescription());
         room.setRoomName(dto.getRoomName());
         room.setPrice(dto.getPrice());
+        room.setUpdatedAt(LocalDateTime.now());
 
         Room updatedRoom = roomRepository.save(room);
 
