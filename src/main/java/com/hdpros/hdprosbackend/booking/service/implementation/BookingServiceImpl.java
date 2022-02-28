@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -44,6 +45,7 @@ public class BookingServiceImpl implements BookingService {
             Booking booking = new Booking();
             BeanUtils.copyProperties(dto, booking);
             booking.setUser(user);
+            booking.setCreatedAt(LocalDateTime.now());
 
             bookingRepository.save(booking);
             return dto;
@@ -66,6 +68,7 @@ public class BookingServiceImpl implements BookingService {
         booking.setStartTime(dto.getStartTime());
         booking.setJobStatus(dto.isJobStatus());
         booking.setRooms((Room) dto.getRoomId());
+        booking.setUpdatedAt(LocalDateTime.now());
 
         Booking updateBooking = bookingRepository.save(booking);
         return getBookingDTO(updateBooking);

@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -43,6 +44,7 @@ public class PlaceServiceImpl implements PlaceService {
             Place place = new Place();
             BeanUtils.copyProperties(dto, place);
             place.setUser(user);
+            place.setCreatedAt(LocalDateTime.now());
 
             placeRepository.save(place);
             return dto;
@@ -61,6 +63,7 @@ public class PlaceServiceImpl implements PlaceService {
         place.setAddress(dto.getAddress());
         place.setState(dto.getState());
         place.setLandMark(dto.getLandMark());
+        place.setUpdatedAt(LocalDateTime.now());
 
         Place updatedPlace = placeRepository.save(place);
         return getPlaceDTO(updatedPlace);
