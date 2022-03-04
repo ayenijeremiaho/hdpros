@@ -37,7 +37,7 @@ public class BvnServiceImpl implements BvnService {
             if (Objects.nonNull(validationResponse)) {
                 if ("BVN lookup successful".equals(validationResponse.getMessage())) {
                     bvnDetails = createAndSaveBVNDetails(validationResponse.getBvnData(), request);
-                    verifiedBVNDetails(bvnDetails);
+                    return verifiedBVNDetails(bvnDetails);
                 }
             }
         }
