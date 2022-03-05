@@ -9,16 +9,20 @@ import com.hdpros.hdprosbackend.image.service.ImageService;
 import com.hdpros.hdprosbackend.providers.cloudinary.CloudinaryService;
 import com.hdpros.hdprosbackend.user.dto.RegisterUserRequest;
 import com.hdpros.hdprosbackend.user.dto.RegisterUserResponse;
-import com.hdpros.hdprosbackend.user.service.UserService;
 import com.hdpros.hdprosbackend.user.model.User;
 import com.hdpros.hdprosbackend.user.service.RegistrationService;
+import com.hdpros.hdprosbackend.user.service.UserService;
 import com.hdpros.hdprosbackend.utils.GeneralUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class RegistrationServiceImpl implements RegistrationService {
@@ -38,6 +42,19 @@ public class RegistrationServiceImpl implements RegistrationService {
         this.userService = userService;
         this.imageService = imageService;
         this.cloudinaryService = cloudinaryService;
+    }
+
+    @Override
+    public MultipartFile convertToMultipart(String base64) {
+        if (GeneralUtil.stringIsNullOrEmpty(base64)) {
+            return null;
+        }
+
+        MultipartFile file = GeneralUtil.base64ToMultipart(base64);
+        if (Objects.isNull(file)) {
+            throw new GeneralException("Invalid image, please re-upload");
+        }
+        return file;
     }
 
     @Override

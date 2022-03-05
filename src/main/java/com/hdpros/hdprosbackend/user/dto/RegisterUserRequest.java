@@ -1,5 +1,7 @@
 package com.hdpros.hdprosbackend.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -7,6 +9,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+@Builder
 @Data
 public class RegisterUserRequest {
 
@@ -39,6 +42,9 @@ public class RegisterUserRequest {
 
     private Long bvnId;
 
+    private String avatar;
+
+    @JsonIgnore
     private MultipartFile file;
 
 }

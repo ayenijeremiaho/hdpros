@@ -23,8 +23,10 @@ public class RegistrationController {
     }
 
     @PostMapping()
-    public Response registerNewUser(@Valid @RequestBody RegisterUserRequest registerUserRequest, @RequestParam(value = "avatar", required = false) MultipartFile file) {
+    public Response registerNewUser(@Valid @RequestBody RegisterUserRequest registerUserRequest) {
+        MultipartFile file = registrationService.convertToMultipart(registerUserRequest.getAvatar());
 
+        registerUserRequest.setFile(file);
         RegisterUserResponse response = registrationService.addNewUser(registerUserRequest);
 
         return generalService.prepareSuccessResponse(response);
