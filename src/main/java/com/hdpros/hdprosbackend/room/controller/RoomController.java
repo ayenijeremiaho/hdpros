@@ -24,8 +24,11 @@ public class RoomController {
     }
 
     @PostMapping("/add")
-    public Response addRoom(@ApiIgnore Principal principal, @RequestBody RoomDTO roomDTO, @RequestParam(value = "avatar", required = false) MultipartFile file) {
+    public Response addRoom(@ApiIgnore Principal principal, @RequestBody RoomDTO roomDTO) {
         //update the email of the user to that of the logged-in user
+        List<MultipartFile> files = roomService.convertToMultipart(roomDTO.getAvatar());
+
+        roomDTO.setFile(files);
         roomDTO.setEmail(principal.getName());
 
         RoomDTO response = roomService.saveRoom(roomDTO);

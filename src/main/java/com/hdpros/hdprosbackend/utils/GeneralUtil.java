@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
@@ -19,8 +20,16 @@ public class GeneralUtil {
         return Objects.isNull(value) || value.isEmpty();
     }
 
+    public static boolean listIsEmpty(List<String> value) {
+        return value.isEmpty();
+    }
+
     public static MultipartFile base64ToMultipart(String base64) {
         return getFile(base64);
+    }
+
+    public static List<MultipartFile> base64ToMultipartList(List<String> base64) {
+        return (List<MultipartFile>) getFile(String.valueOf(base64));
     }
 
     public static MultipartFile getFile(String base64) {

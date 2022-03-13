@@ -10,9 +10,11 @@ import com.hdpros.hdprosbackend.room.model.Room;
 import com.hdpros.hdprosbackend.room.repository.RoomRepository;
 import com.hdpros.hdprosbackend.room.service.RoomService;
 import com.hdpros.hdprosbackend.user.model.User;
+import com.hdpros.hdprosbackend.utils.GeneralUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,6 +39,19 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public List<MultipartFile> convertToMultipart(List<String> base64) {
+        if (GeneralUtil.listIsEmpty(base64)) {
+            return null;
+        }
+
+        List<MultipartFile> file = GeneralUtil.base64ToMultipartList(base64);
+        if (Objects.isNull(file)) {
+            throw new GeneralException("Invalid image, please re-upload");
+        }
+        return file;
+    }
+
+    @Override
     public RoomDTO saveRoom(RoomDTO dto) {
         log.info("Saving room for user");
 
@@ -58,7 +73,7 @@ public class RoomServiceImpl implements RoomService {
 
             //verify image was uploaded
             if (Objects.nonNull(dto.getFile())) {
-                Map<String, String> imageMap = cloudinaryService.upload(dto.getFile());
+                Map<String, String> imageMap = cloudinaryService.upload((MultipartFile) dto.getFile());
 
                 if (Objects.nonNull(imageMap)) {
                     String publicId = imageMap.get("publicId");
@@ -93,7 +108,7 @@ public class RoomServiceImpl implements RoomService {
 
         //verify image was uploaded
         if (Objects.nonNull(dto.getFile())) {
-            Map<String, String> imageMap = cloudinaryService.upload(dto.getFile());
+            Map<String, String> imageMap = cloudinaryService.upload((MultipartFile) dto.getFile());
 
             if (Objects.nonNull(imageMap)) {
                 String publicId = imageMap.get("publicId");
@@ -150,4 +165,5 @@ public class RoomServiceImpl implements RoomService {
         BeanUtils.copyProperties(room, roomDTO);
         return roomDTO;
     }
+
 }
