@@ -52,6 +52,19 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public MultipartFile convertOneToMultipart(String base64) {
+        if (GeneralUtil.stringIsNullOrEmpty(base64)) {
+            return null;
+        }
+
+        MultipartFile file = GeneralUtil.base64ToMultipart(base64);
+        if (Objects.isNull(file)) {
+            throw new GeneralException("Invalid image, please re-upload");
+        }
+        return file;
+    }
+
+    @Override
     public RoomDTO saveRoom(RoomDTO dto) {
         log.info("Saving room for user");
 
@@ -73,7 +86,8 @@ public class RoomServiceImpl implements RoomService {
 
             //verify image was uploaded
             if (Objects.nonNull(dto.getFile())) {
-                Map<String, String> imageMap = cloudinaryService.upload((MultipartFile) dto.getFile());
+                Map<String, String> imageMap = cloudinaryService.upload(dto.getFile());
+//                Map<String, String> imageMap = cloudinaryService.upload((MultipartFile) dto.getFile());
 
                 if (Objects.nonNull(imageMap)) {
                     String publicId = imageMap.get("publicId");
@@ -108,7 +122,8 @@ public class RoomServiceImpl implements RoomService {
 
         //verify image was uploaded
         if (Objects.nonNull(dto.getFile())) {
-            Map<String, String> imageMap = cloudinaryService.upload((MultipartFile) dto.getFile());
+            Map<String, String> imageMap = cloudinaryService.upload(dto.getFile());
+//            Map<String, String> imageMap = cloudinaryService.upload((MultipartFile) dto.getFile());
 
             if (Objects.nonNull(imageMap)) {
                 String publicId = imageMap.get("publicId");

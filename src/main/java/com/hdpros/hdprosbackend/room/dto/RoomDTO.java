@@ -3,6 +3,7 @@ package com.hdpros.hdprosbackend.room.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @Data
@@ -20,8 +21,13 @@ public class RoomDTO {
 
     private Long id;
 
-    private List<String> avatar;
+//    private List<String> avatar;
+
+    private String avatar;
 
     @JsonIgnore
-    private List<MultipartFile> file;
+    private MultipartFile file;
+
+//    @JsonIgnore
+//    private List<MultipartFile> file;
 }

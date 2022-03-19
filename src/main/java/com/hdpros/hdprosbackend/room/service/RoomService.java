@@ -9,6 +9,8 @@ public interface RoomService {
 
     List<MultipartFile> convertToMultipart(List<String> base64);
 
+    MultipartFile convertOneToMultipart(String base64);
+
     RoomDTO saveRoom(RoomDTO dto);
 
     RoomDTO updateRoom(RoomDTO dto);
