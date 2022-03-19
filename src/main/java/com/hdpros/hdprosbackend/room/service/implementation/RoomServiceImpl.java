@@ -65,7 +65,7 @@ public class RoomServiceImpl implements RoomService {
 
         User user = generalService.getUser(dto.getEmail());
 
-        if (roomRepository.countAllByUserAndDelFlag(user, false) > 5) {
+        if (roomRepository.countAllByUserAndDelFlag(user, false) > 10) {
             throw new GeneralException("User can only save upto 5 room");
         }
 
