@@ -28,10 +28,6 @@ public class GeneralUtil {
         return getFile(base64);
     }
 
-    public static List<MultipartFile> base64ToMultipartList(List<String> base64) {
-        return (List<MultipartFile>) getFile(String.valueOf(base64));
-    }
-
     public static MultipartFile getFile(String base64) {
         try {
             String[] baseStrs = base64.split(",");
