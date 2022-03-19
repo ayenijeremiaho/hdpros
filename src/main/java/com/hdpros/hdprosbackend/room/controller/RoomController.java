@@ -2,7 +2,8 @@ package com.hdpros.hdprosbackend.room.controller;
 
 import com.hdpros.hdprosbackend.general.GeneralService;
 import com.hdpros.hdprosbackend.general.Response;
-import com.hdpros.hdprosbackend.room.dto.RoomDTO;
+import com.hdpros.hdprosbackend.room.dto.RoomDTORequest;
+import com.hdpros.hdprosbackend.room.dto.RoomDTOResponse;
 import com.hdpros.hdprosbackend.room.service.RoomService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,8 +25,9 @@ public class RoomController {
     }
 
     @PostMapping("/add")
-    public Response addRoom(@ApiIgnore Principal principal, @RequestBody RoomDTO roomDTO) {
+    public Response addRoom(@ApiIgnore Principal principal, @RequestBody RoomDTORequest roomDTORequest) {
         //update the email of the user to that of the logged-in user
+<<<<<<< HEAD
 //        List<MultipartFile> files = roomService.convertToMultipart(roomDTO.getAvatar());
 
         MultipartFile file = roomService.convertOneToMultipart(roomDTO.getAvatar());
@@ -34,11 +36,17 @@ public class RoomController {
         roomDTO.setEmail(principal.getName());
 
         RoomDTO response = roomService.saveRoom(roomDTO);
+=======
+        roomDTORequest.setEmail(principal.getName());
+
+        RoomDTOResponse response = roomService.saveRoom(roomDTORequest);
+>>>>>>> master
 
         return generalService.prepareSuccessResponse(response);
     }
 
     @PostMapping("/update")
+<<<<<<< HEAD
     public Response updateRoom(@ApiIgnore Principal principal, @RequestBody RoomDTO roomDTO) {
         //update the email of the user to that of the logged-in user
         //        List<MultipartFile> files = roomService.convertToMultipart(roomDTO.getAvatar());
@@ -47,8 +55,13 @@ public class RoomController {
 
         roomDTO.setFile(file);
         roomDTO.setEmail(principal.getName());
+=======
+    public Response updateRoom(@ApiIgnore Principal principal, @RequestBody RoomDTORequest roomDTORequest, @RequestParam(value = "avatar", required = false) MultipartFile file) {
+        //update the email of the user to that of the logged-in user
+        roomDTORequest.setEmail(principal.getName());
+>>>>>>> master
 
-        RoomDTO response = roomService.updateRoom(roomDTO);
+        RoomDTOResponse response = roomService.updateRoom(roomDTORequest);
 
         return generalService.prepareSuccessResponse(response);
     }
@@ -62,7 +75,7 @@ public class RoomController {
 
     @PostMapping("/all")
     public Response allRooms(@ApiIgnore Principal principal) {
-        List<RoomDTO> response = roomService.getRoomForUser(principal.getName());
+        List<RoomDTORequest> response = roomService.getRoomForUser(principal.getName());
 
         return generalService.prepareSuccessResponse(response);
     }

@@ -7,7 +7,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Data
-public class RoomDTO {
+public class RoomDTOResponse {
+
+    private Long id;
 
     private String roomName;
 
@@ -19,6 +21,7 @@ public class RoomDTO {
 
     private String email;
 
+<<<<<<< HEAD:src/main/java/com/hdpros/hdprosbackend/room/dto/RoomDTO.java
     private Long id;
 
 //    private List<String> avatar;
@@ -30,4 +33,8 @@ public class RoomDTO {
 
 //    @JsonIgnore
 //    private List<MultipartFile> file;
+=======
+    private List<String> avatar;
+
+>>>>>>> master:src/main/java/com/hdpros/hdprosbackend/room/dto/RoomDTOResponse.java
 }
