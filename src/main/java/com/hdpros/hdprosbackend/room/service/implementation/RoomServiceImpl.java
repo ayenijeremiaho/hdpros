@@ -48,10 +48,11 @@ public class RoomServiceImpl implements RoomService {
         List<MultipartFile> files = new ArrayList<>();
 
         base64.forEach(s -> {
-            MultipartFile file = GeneralUtil.getFile(s);
+            MultipartFile file = GeneralUtil.base64ToMultipart(s);
             if (Objects.isNull(file)) {
                 throw new GeneralException("Invalid image, please re-upload");
             }
+            files.add(file);
         });
 
         return files;
