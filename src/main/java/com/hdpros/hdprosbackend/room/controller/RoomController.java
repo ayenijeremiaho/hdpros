@@ -75,7 +75,7 @@ public class RoomController {
 
     @PostMapping("/all")
     public Response allRooms(@ApiIgnore Principal principal) {
-        List<RoomDTORequest> response = roomService.getRoomForUser(principal.getName());
+        List<RoomDTOResponse> response = roomService.getRoomForUser(principal.getName());
 
         return generalService.prepareSuccessResponse(response);
     }

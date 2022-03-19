@@ -82,7 +82,7 @@ public class RoomServiceImpl implements RoomService {
 
         User user = generalService.getUser(dto.getEmail());
 
-        if (roomRepository.countAllByUserAndDelFlag(user, false) > 5) {
+        if (roomRepository.countAllByUserAndDelFlag(user, false) > 10) {
             throw new GeneralException("User can only save upto 5 room");
         }
 
@@ -165,14 +165,14 @@ public class RoomServiceImpl implements RoomService {
 
 
     @Override
-    public List<RoomDTORequest> getRoomForUser(String email) {
+    public List<RoomDTOResponse> getRoomForUser(String email) {
         log.info("Getting rooms for user");
 
         User user = generalService.getUser(email);
 
         List<Room> rooms = roomRepository.findByUserAndDelFlag(user, false);
 
-        return rooms.stream().map(this::getRoomDTORequest).collect(Collectors.toList());
+        return rooms.stream().map(this::getRoomDTOResponse).collect(Collectors.toList());
     }
 
     @Override
@@ -205,6 +205,25 @@ public class RoomServiceImpl implements RoomService {
         BeanUtils.copyProperties(room, roomDTORequest);
         return roomDTORequest;
     }
+
+    private RoomDTOResponse getRoomDTOResponse(Room room) {
+        log.info("Converting Room to Room DTO");
+
+        RoomDTOResponse dtoResponse = new RoomDTOResponse();
+        BeanUtils.copyProperties(room, dtoResponse);
+        dtoResponse.setEmail(room.getUser().getEmail());
+
+        List<String> imageUrl = new ArrayList<>();
+        room.getImages().forEach(image -> {
+            imageUrl.add(image.getUrl());
+        });
+
+        dtoResponse.setId(room.getId());
+        dtoResponse.setAvatar(imageUrl);
+
+        return dtoResponse;
+    }
+
 
     private RoomDTOResponse getRoomDTOResponse(Room room, RoomDTORequest dtoRequest) {
         log.info("Converting Room to Room DTO");
