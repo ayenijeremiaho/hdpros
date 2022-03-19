@@ -177,7 +177,7 @@ public class RoomServiceImpl implements RoomService {
 
         RoomDTOResponse dtoResponse = new RoomDTOResponse();
         BeanUtils.copyProperties(dtoRequest, dtoResponse);
-
+        dtoResponse.setEmail(room.getUser().getEmail());
         dtoResponse.setId(room.getId());
         return dtoResponse;
     }
