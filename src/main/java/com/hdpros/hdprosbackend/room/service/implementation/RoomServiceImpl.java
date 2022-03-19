@@ -83,25 +83,10 @@ public class RoomServiceImpl implements RoomService {
             room = roomRepository.save(room);
 
             //verify image was uploaded
-            if (!dto.getFile().isEmpty()) {
+            if (!dto.getAvatar().isEmpty()) {
                 List<Image> images = new ArrayList<>();
 
-                dto.getFile().forEach(file -> {
-
-                    Map<String, String> imageMap = cloudinaryService.upload((MultipartFile) dto.getFile());
-
-                    if (Objects.nonNull(imageMap)) {
-                        String publicId = imageMap.get("publicId");
-                        String imageUrl = imageMap.get("url");
-
-                        //save profile image
-                        Image image = imageService.saveImage(publicId, imageUrl, user);
-                        images.add(image);
-
-                        //add images url to response
-                        imagesUrl.add(imageUrl);
-                    }
-                });
+                uploadImage(dto, user, imagesUrl, images);
 
                 room.setImages(images);
                 room = roomRepository.save(room);
@@ -115,13 +100,18 @@ public class RoomServiceImpl implements RoomService {
         throw new GeneralException("room with description already created for user");
     }
 
+
     @Override
-    public RoomDTORequest updateRoom(RoomDTORequest dto) {
+    public RoomDTOResponse updateRoom(RoomDTORequest dto) {
         log.info("Updating room for user");
 
         User user = generalService.getUser(dto.getEmail());
 
         Room room = getRoom(user, dto.getId());
+
+        List<String> imagesUrl = new ArrayList<>();
+
+        List<Image> images = new ArrayList<>();
 
         room.setCount(dto.getCount());
         room.setDescription(dto.getDescription());
@@ -131,21 +121,12 @@ public class RoomServiceImpl implements RoomService {
 
         Room updatedRoom = roomRepository.save(room);
 
-        //verify image was uploaded
-        if (Objects.nonNull(dto.getFile())) {
-            Map<String, String> imageMap = cloudinaryService.upload((MultipartFile) dto.getFile());
+        uploadImage(dto, user, imagesUrl, images);
 
-            if (Objects.nonNull(imageMap)) {
-                String publicId = imageMap.get("publicId");
-                String imageUrl = imageMap.get("url");
-
-                //save profile image
-                Image image = imageService.saveRoomImage(publicId, imageUrl, user, room);
-                room.setImages(image);
-                roomRepository.save(room);
-            }
-        }
-        return getRoomDTORequest(updatedRoom);
+        //get response object
+        RoomDTOResponse response = getRoomDTOResponse(updatedRoom, dto);
+        response.setAvatar(imagesUrl);
+        return response;
     }
 
 
@@ -201,5 +182,28 @@ public class RoomServiceImpl implements RoomService {
         return dtoResponse;
     }
 
+    private void uploadImage(RoomDTORequest dto, User user, List<String> imagesUrl, List<Image> images) {
+        dto.getAvatar().forEach(s -> {
+
+            MultipartFile file = GeneralUtil.base64ToMultipart(s);
+            if (Objects.isNull(file)) {
+                throw new GeneralException("Invalid image, please re-upload");
+            }
+
+            Map<String, String> imageMap = cloudinaryService.upload(file);
+
+            if (Objects.nonNull(imageMap)) {
+                String publicId = imageMap.get("publicId");
+                String imageUrl = imageMap.get("url");
+
+                //save profile image
+                Image image = imageService.saveImage(publicId, imageUrl, user);
+                images.add(image);
+
+                //add images url to response
+                imagesUrl.add(imageUrl);
+            }
+        });
+    }
 
 }

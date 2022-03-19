@@ -12,7 +12,7 @@ public interface RoomService {
 
     RoomDTOResponse saveRoom(RoomDTORequest dto);
 
-    RoomDTORequest updateRoom(RoomDTORequest dto);
+    RoomDTOResponse updateRoom(RoomDTORequest dto);
 
     List<RoomDTORequest> getRoomForUser(String email);
 

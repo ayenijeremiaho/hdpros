@@ -21,7 +21,4 @@ public class RoomDTORequest {
     private Long id;
 
     private List<String> avatar;
-
-    @JsonIgnore
-    private List<MultipartFile> file;
 }

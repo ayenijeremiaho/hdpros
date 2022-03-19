@@ -27,9 +27,6 @@ public class RoomController {
     @PostMapping("/add")
     public Response addRoom(@ApiIgnore Principal principal, @RequestBody RoomDTORequest roomDTORequest) {
         //update the email of the user to that of the logged-in user
-        List<MultipartFile> files = roomService.convertToMultipart(roomDTORequest.getAvatar());
-
-        roomDTORequest.setFile(files);
         roomDTORequest.setEmail(principal.getName());
 
         RoomDTOResponse response = roomService.saveRoom(roomDTORequest);
@@ -42,7 +39,7 @@ public class RoomController {
         //update the email of the user to that of the logged-in user
         roomDTORequest.setEmail(principal.getName());
 
-        RoomDTORequest response = roomService.updateRoom(roomDTORequest);
+        RoomDTOResponse response = roomService.updateRoom(roomDTORequest);
 
         return generalService.prepareSuccessResponse(response);
     }
