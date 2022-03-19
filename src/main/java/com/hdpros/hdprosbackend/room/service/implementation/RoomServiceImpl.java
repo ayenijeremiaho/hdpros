@@ -10,7 +10,6 @@ import com.hdpros.hdprosbackend.room.dto.RoomDTOResponse;
 import com.hdpros.hdprosbackend.room.model.Room;
 import com.hdpros.hdprosbackend.room.repository.RoomRepository;
 import com.hdpros.hdprosbackend.room.service.RoomService;
-import com.hdpros.hdprosbackend.user.dto.LoginUserResponse;
 import com.hdpros.hdprosbackend.user.model.User;
 import com.hdpros.hdprosbackend.utils.GeneralUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -78,6 +77,8 @@ public class RoomServiceImpl implements RoomService {
             log.info("Saving new room for user => {}", user.getEmail());
             Room room = new Room();
             BeanUtils.copyProperties(dto, room);
+
+            room.setId(null);
             room.setUser(user);
             room.setCreatedAt(LocalDateTime.now());
 
@@ -176,14 +177,6 @@ public class RoomServiceImpl implements RoomService {
         return room;
     }
 
-    private RoomDTORequest getRoomDTORequest(Room room) {
-        log.info("Converting Room to Room DTO");
-
-        RoomDTORequest roomDTORequest = new RoomDTORequest();
-        BeanUtils.copyProperties(room, roomDTORequest);
-        return roomDTORequest;
-    }
-
     private RoomDTOResponse getRoomDTOResponse(Room room) {
         log.info("Converting Room to Room DTO");
 
@@ -192,9 +185,7 @@ public class RoomServiceImpl implements RoomService {
         dtoResponse.setEmail(room.getUser().getEmail());
 
         List<String> imageUrl = new ArrayList<>();
-        room.getImages().forEach(image -> {
-            imageUrl.add(image.getUrl());
-        });
+        room.getImages().forEach(image -> imageUrl.add(image.getUrl()));
 
         dtoResponse.setId(room.getId());
         dtoResponse.setAvatar(imageUrl);

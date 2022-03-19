@@ -8,6 +8,8 @@ import java.util.List;
 @Data
 public class RoomDTORequest {
 
+    private Long id;
+
     private String roomName;
 
     private int count;
