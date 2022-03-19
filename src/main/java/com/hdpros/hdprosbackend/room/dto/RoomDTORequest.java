@@ -18,7 +18,5 @@ public class RoomDTORequest {
 
     private String email;
 
-    private Long id;
-
     private List<String> avatar;
 }

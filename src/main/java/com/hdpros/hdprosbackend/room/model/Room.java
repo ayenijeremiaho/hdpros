@@ -27,7 +27,7 @@ public class Room extends BaseEntity {
 
     private String description;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
 
     private boolean delFlag = false;

@@ -10,6 +10,7 @@ import com.hdpros.hdprosbackend.room.dto.RoomDTOResponse;
 import com.hdpros.hdprosbackend.room.model.Room;
 import com.hdpros.hdprosbackend.room.repository.RoomRepository;
 import com.hdpros.hdprosbackend.room.service.RoomService;
+import com.hdpros.hdprosbackend.user.dto.LoginUserResponse;
 import com.hdpros.hdprosbackend.user.model.User;
 import com.hdpros.hdprosbackend.utils.GeneralUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -60,24 +61,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-<<<<<<< HEAD
-    public MultipartFile convertOneToMultipart(String base64) {
-        if (GeneralUtil.stringIsNullOrEmpty(base64)) {
-            return null;
-        }
-
-        MultipartFile file = GeneralUtil.base64ToMultipart(base64);
-        if (Objects.isNull(file)) {
-            throw new GeneralException("Invalid image, please re-upload");
-        }
-        return file;
-    }
-
-    @Override
-    public RoomDTO saveRoom(RoomDTO dto) {
-=======
     public RoomDTOResponse saveRoom(RoomDTORequest dto) {
->>>>>>> master
         log.info("Saving room for user");
 
         User user = generalService.getUser(dto.getEmail());
@@ -100,18 +84,8 @@ public class RoomServiceImpl implements RoomService {
             room = roomRepository.save(room);
 
             //verify image was uploaded
-<<<<<<< HEAD
-<<<<<<< HEAD
-            if (Objects.nonNull(dto.getFile())) {
-                Map<String, String> imageMap = cloudinaryService.upload(dto.getFile());
-//                Map<String, String> imageMap = cloudinaryService.upload((MultipartFile) dto.getFile());
-=======
-            if (!dto.getFile().isEmpty()) {
-=======
             if (!dto.getAvatar().isEmpty()) {
->>>>>>> master
                 List<Image> images = new ArrayList<>();
->>>>>>> master
 
                 uploadImage(dto, user, imagesUrl, images);
 
@@ -148,14 +122,7 @@ public class RoomServiceImpl implements RoomService {
 
         Room updatedRoom = roomRepository.save(room);
 
-<<<<<<< HEAD
-        //verify image was uploaded
-        if (Objects.nonNull(dto.getFile())) {
-            Map<String, String> imageMap = cloudinaryService.upload(dto.getFile());
-//            Map<String, String> imageMap = cloudinaryService.upload((MultipartFile) dto.getFile());
-=======
         uploadImage(dto, user, imagesUrl, images);
->>>>>>> master
 
         //get response object
         RoomDTOResponse response = getRoomDTOResponse(updatedRoom, dto);
@@ -186,6 +153,17 @@ public class RoomServiceImpl implements RoomService {
         room.setDelFlag(true);
         roomRepository.save(room);
         return true;
+    }
+
+    @Override
+    public RoomDTOResponse getSingleRoomForUser(String email, Long roomId) {
+        log.info("Getting Single Room for user");
+
+        User user = generalService.getUser(email);
+
+        Room room = getRoom(user, roomId);
+
+        return getRoomDTOResponse(room);
     }
 
     private Room getRoom(User user, Long roomId) {

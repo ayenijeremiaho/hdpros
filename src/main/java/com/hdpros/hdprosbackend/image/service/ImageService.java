@@ -12,7 +12,7 @@ public interface ImageService {
 
     Image getImage(String url, Long userId);
 
-    Image getProfileImage(String url, Long userId);
+    Image getProfileImage(Long userId);
 
     Image saveRoomImage(String publicId, String url, User user, Room room);
 

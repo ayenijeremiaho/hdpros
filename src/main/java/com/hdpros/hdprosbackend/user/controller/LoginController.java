@@ -26,7 +26,7 @@ public class LoginController {
     }
 
     @PostMapping()
-    public Response getUser(@ApiIgnore Principal principal, @RequestBody LoginUserRequest userRequest) {
+    public Response getUser(@RequestBody LoginUserRequest userRequest) {
 
         LoginUserResponse userResponse = loginService.loginUser(userRequest);
 

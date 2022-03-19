@@ -1,13 +1,27 @@
 package com.hdpros.hdprosbackend.user.dto;
 
-import com.hdpros.hdprosbackend.user.model.User;
-import lombok.Builder;
 import lombok.Data;
 
-@Builder
 @Data
 public class LoginUserResponse {
 
-    private User user;
+    private Long id;
 
+    private String email;
+
+    private String firstName;
+
+    private String lastName;
+
+    private String phoneNumber;
+
+    private String state;
+
+    private String landMark;
+
+    private String address;
+
+    private boolean serviceProvider;
+
+    private String avatar;
 }

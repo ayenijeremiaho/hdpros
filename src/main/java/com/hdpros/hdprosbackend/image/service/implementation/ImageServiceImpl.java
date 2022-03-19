@@ -64,8 +64,8 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Image getProfileImage(String url, Long userId) {
-        return imageRepository.findByUrlAndProfileImageAndUser_Id(url, true, userId);
+    public Image getProfileImage(Long userId) {
+        return imageRepository.findByProfileImageAndUser_Id(true, userId);
     }
 
 //    @Override
