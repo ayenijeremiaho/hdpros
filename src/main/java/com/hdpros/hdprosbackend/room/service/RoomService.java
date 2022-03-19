@@ -14,7 +14,7 @@ public interface RoomService {
 
     RoomDTOResponse updateRoom(RoomDTORequest dto);
 
-    List<RoomDTORequest> getRoomForUser(String email);
+    List<RoomDTOResponse> getRoomForUser(String email);
 
     boolean deleteRoom(String email, Long roomId);
 }
