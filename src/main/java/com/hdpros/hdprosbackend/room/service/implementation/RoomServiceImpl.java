@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -44,11 +45,16 @@ public class RoomServiceImpl implements RoomService {
             return null;
         }
 
-        List<MultipartFile> file = GeneralUtil.base64ToMultipartList(base64);
-        if (Objects.isNull(file)) {
-            throw new GeneralException("Invalid image, please re-upload");
-        }
-        return file;
+        List<MultipartFile> files = new ArrayList<>();
+
+        base64.forEach(s -> {
+            MultipartFile file = GeneralUtil.getFile(s);
+            if (Objects.isNull(file)) {
+                throw new GeneralException("Invalid image, please re-upload");
+            }
+        });
+
+        return files;
     }
 
     @Override
@@ -69,22 +75,30 @@ public class RoomServiceImpl implements RoomService {
             room.setUser(user);
             room.setCreatedAt(LocalDateTime.now());
 
-            roomRepository.save(room);
+            room = roomRepository.save(room);
 
             //verify image was uploaded
-            if (Objects.nonNull(dto.getFile())) {
-                Map<String, String> imageMap = cloudinaryService.upload((MultipartFile) dto.getFile());
+            if (!dto.getFile().isEmpty()) {
+                List<Image> images = new ArrayList<>();
 
-                if (Objects.nonNull(imageMap)) {
-                    String publicId = imageMap.get("publicId");
-                    String imageUrl = imageMap.get("url");
+                dto.getFile().forEach(file -> {
 
-                    //save profile image
-                    Image image = imageService.saveRoomImage(publicId, imageUrl, user, room);
-                    room.setImages(image);
-                    roomRepository.save(room);
-                }
+                    Map<String, String> imageMap = cloudinaryService.upload((MultipartFile) dto.getFile());
+
+                    if (Objects.nonNull(imageMap)) {
+                        String publicId = imageMap.get("publicId");
+                        String imageUrl = imageMap.get("url");
+
+                        //save profile image
+                        Image image = imageService.saveImage(publicId, imageUrl, user);
+                        images.add(image);
+                    }
+                });
+
+                room.setImages(images);
+                roomRepository.save(room);
             }
+
             return dto;
         }
         throw new GeneralException("room with description already created for user");
