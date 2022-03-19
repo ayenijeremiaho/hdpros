@@ -5,7 +5,8 @@ import com.hdpros.hdprosbackend.general.GeneralService;
 import com.hdpros.hdprosbackend.image.model.Image;
 import com.hdpros.hdprosbackend.image.service.ImageService;
 import com.hdpros.hdprosbackend.providers.cloudinary.CloudinaryService;
-import com.hdpros.hdprosbackend.room.dto.RoomDTO;
+import com.hdpros.hdprosbackend.room.dto.RoomDTORequest;
+import com.hdpros.hdprosbackend.room.dto.RoomDTOResponse;
 import com.hdpros.hdprosbackend.room.model.Room;
 import com.hdpros.hdprosbackend.room.repository.RoomRepository;
 import com.hdpros.hdprosbackend.room.service.RoomService;
@@ -59,7 +60,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public RoomDTO saveRoom(RoomDTO dto) {
+    public RoomDTOResponse saveRoom(RoomDTORequest dto) {
         log.info("Saving room for user");
 
         User user = generalService.getUser(dto.getEmail());
@@ -69,6 +70,9 @@ public class RoomServiceImpl implements RoomService {
         }
 
         if (!roomRepository.existsByDescriptionAndUserAndDelFlag(dto.getDescription(), user, false)) {
+
+
+            List<String> imagesUrl = new ArrayList<>();
 
             log.info("Saving new room for user => {}", user.getEmail());
             Room room = new Room();
@@ -93,20 +97,26 @@ public class RoomServiceImpl implements RoomService {
                         //save profile image
                         Image image = imageService.saveImage(publicId, imageUrl, user);
                         images.add(image);
+
+                        //add images url to response
+                        imagesUrl.add(imageUrl);
                     }
                 });
 
                 room.setImages(images);
-                roomRepository.save(room);
+                room = roomRepository.save(room);
             }
 
-            return dto;
+            //get response object
+            RoomDTOResponse response = getRoomDTOResponse(room, dto);
+            response.setAvatar(imagesUrl);
+            return response;
         }
         throw new GeneralException("room with description already created for user");
     }
 
     @Override
-    public RoomDTO updateRoom(RoomDTO dto) {
+    public RoomDTORequest updateRoom(RoomDTORequest dto) {
         log.info("Updating room for user");
 
         User user = generalService.getUser(dto.getEmail());
@@ -135,19 +145,19 @@ public class RoomServiceImpl implements RoomService {
                 roomRepository.save(room);
             }
         }
-        return getRoomDTO(updatedRoom);
+        return getRoomDTORequest(updatedRoom);
     }
 
 
     @Override
-    public List<RoomDTO> getRoomForUser(String email) {
+    public List<RoomDTORequest> getRoomForUser(String email) {
         log.info("Getting rooms for user");
 
         User user = generalService.getUser(email);
 
         List<Room> rooms = roomRepository.findByUserAndDelFlag(user, false);
 
-        return rooms.stream().map(this::getRoomDTO).collect(Collectors.toList());
+        return rooms.stream().map(this::getRoomDTORequest).collect(Collectors.toList());
     }
 
     @Override
@@ -173,12 +183,23 @@ public class RoomServiceImpl implements RoomService {
         return room;
     }
 
-    private RoomDTO getRoomDTO(Room room) {
+    private RoomDTORequest getRoomDTORequest(Room room) {
         log.info("Converting Room to Room DTO");
 
-        RoomDTO roomDTO = new RoomDTO();
-        BeanUtils.copyProperties(room, roomDTO);
-        return roomDTO;
+        RoomDTORequest roomDTORequest = new RoomDTORequest();
+        BeanUtils.copyProperties(room, roomDTORequest);
+        return roomDTORequest;
     }
+
+    private RoomDTOResponse getRoomDTOResponse(Room room, RoomDTORequest dtoRequest) {
+        log.info("Converting Room to Room DTO");
+
+        RoomDTOResponse dtoResponse = new RoomDTOResponse();
+        BeanUtils.copyProperties(dtoRequest, dtoResponse);
+
+        dtoResponse.setId(room.getId());
+        return dtoResponse;
+    }
+
 
 }
