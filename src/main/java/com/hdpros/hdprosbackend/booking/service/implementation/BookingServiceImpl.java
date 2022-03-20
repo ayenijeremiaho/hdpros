@@ -47,6 +47,9 @@ public class BookingServiceImpl implements BookingService {
             booking.setUser(user);
             booking.setCreatedAt(LocalDateTime.now());
 
+            //get id
+            dto.setId(booking.getId());
+
             bookingRepository.save(booking);
             return dto;
         }
@@ -97,6 +100,32 @@ public class BookingServiceImpl implements BookingService {
         booking.setDelFlag(true);
         bookingRepository.save(booking);
         return true;
+    }
+
+    @Override
+    public boolean updateBookingJobStatus(String email, Long bookingId) {
+        log.info("Updating booking job status for user");
+
+        User user = generalService.getUser(email);
+
+        //confirm user is not a service provider
+
+        Booking booking = getBooking(user, bookingId);
+
+        booking.setJobStatus(true);
+        bookingRepository.save(booking);
+        return true;
+    }
+
+    @Override
+    public BookingDTO getSingleBookingForUser(String email, Long bookingId) {
+        log.info("Getting Single booking for user");
+
+        User user = generalService.getUser(email);
+
+        Booking booking = getBooking(user, bookingId);
+
+        return getBookingDTO(booking);
     }
 
     private Booking getBooking(User user, Long bookingId) {

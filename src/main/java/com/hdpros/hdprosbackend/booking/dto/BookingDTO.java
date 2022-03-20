@@ -1,5 +1,6 @@
 package com.hdpros.hdprosbackend.booking.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ public class BookingDTO {
 
     private LocalDate startDate;
 
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "HH:mm:ss[.SSS][.SS][.S]")
     private LocalTime startTime;
 
     private String description;

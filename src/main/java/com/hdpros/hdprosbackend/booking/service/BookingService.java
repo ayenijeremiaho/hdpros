@@ -12,4 +12,8 @@ public interface BookingService {
     List<BookingDTO> getBookingForUser(String email);
 
     boolean deleteBooking(String email, Long bookingId);
+
+    boolean updateBookingJobStatus(String email, Long bookingId);
+
+    BookingDTO getSingleBookingForUser(String email, Long bookingId);
 }

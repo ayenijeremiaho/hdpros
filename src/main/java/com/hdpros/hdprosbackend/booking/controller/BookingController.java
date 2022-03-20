@@ -43,8 +43,8 @@ public class BookingController {
     }
 
     @PostMapping("/delete/{BookingId}")
-    public Response deleteBooking(@ApiIgnore Principal principal, @PathVariable Long bookingId) {
-        boolean response = bookingService.deleteBooking(principal.getName(), bookingId);
+    public Response deleteBooking(@ApiIgnore Principal principal, @PathVariable Long BookingId) {
+        boolean response = bookingService.deleteBooking(principal.getName(), BookingId);
 
         return generalService.prepareSuccessResponse(response);
     }
@@ -52,6 +52,20 @@ public class BookingController {
     @PostMapping("/all")
     public Response allBookings(@ApiIgnore Principal principal) {
         List<BookingDTO> response = bookingService.getBookingForUser(principal.getName());
+
+        return generalService.prepareSuccessResponse(response);
+    }
+
+    @PostMapping("/{bookingId}")
+    public Response getSingleBooking(@ApiIgnore Principal principal, @PathVariable Long bookingId) {
+        BookingDTO response = bookingService.getSingleBookingForUser(principal.getName(), bookingId);
+
+        return generalService.prepareSuccessResponse(response);
+    }
+
+    @PostMapping("/jobStatus/{BookingId}")
+    public Response updateBookingJobStatus(@ApiIgnore Principal principal, @PathVariable Long BookingId) {
+        boolean response = bookingService.deleteBooking(principal.getName(), BookingId);
 
         return generalService.prepareSuccessResponse(response);
     }
