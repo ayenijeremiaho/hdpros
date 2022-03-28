@@ -16,7 +16,7 @@ public interface BookingService {
 
     boolean deleteBooking(String email, Long bookingId);
 
-    boolean updateBookingJobStatus(String email, Long bookingId);
+    boolean updateBookingJobStatus(String email, Long bookingId, String statusParam);
 
     BookingDTOResponse getSingleBookingForUser(String email, Long bookingId);
 }

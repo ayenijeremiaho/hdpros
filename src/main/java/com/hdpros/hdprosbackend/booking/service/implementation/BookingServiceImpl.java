@@ -7,6 +7,8 @@ import com.hdpros.hdprosbackend.booking.repository.BookingRepository;
 import com.hdpros.hdprosbackend.booking.service.BookingService;
 import com.hdpros.hdprosbackend.exceptions.GeneralException;
 import com.hdpros.hdprosbackend.general.GeneralService;
+import com.hdpros.hdprosbackend.places.dto.PlaceDTO;
+import com.hdpros.hdprosbackend.places.service.PlaceService;
 import com.hdpros.hdprosbackend.room.dto.RoomDTOResponse;
 import com.hdpros.hdprosbackend.room.model.Room;
 import com.hdpros.hdprosbackend.room.service.RoomService;
@@ -30,11 +32,13 @@ public class BookingServiceImpl implements BookingService {
     private int count;
 
     private final RoomService roomService;
+    private final PlaceService placeService;
     private final GeneralService generalService;
     private final BookingRepository bookingRepository;
 
-    public BookingServiceImpl(RoomService roomService, GeneralService generalService, BookingRepository bookingRepository) {
+    public BookingServiceImpl(RoomService roomService, PlaceService placeService, GeneralService generalService, BookingRepository bookingRepository) {
         this.roomService = roomService;
+        this.placeService = placeService;
         this.generalService = generalService;
         this.bookingRepository = bookingRepository;
     }
@@ -153,7 +157,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public boolean updateBookingJobStatus(String email, Long bookingId) {
+    public boolean updateBookingJobStatus(String email, Long bookingId, String statusParam) {
         log.info("Updating booking job status for user");
 
         User user = generalService.getUser(email);
@@ -162,7 +166,23 @@ public class BookingServiceImpl implements BookingService {
 
         Booking booking = getBooking(user, bookingId);
 
-        booking.setJobStatus(true);
+        if (Objects.equals(statusParam, "pending")) {
+            booking.setJobStatus(false);
+            booking.setAccepted(false);
+            booking.setPaid(false);
+        } else if (Objects.equals(statusParam, "done")) {
+            booking.setJobStatus(true);
+            booking.setAccepted(true);
+            booking.setPaid(true);
+        } else if (Objects.equals(statusParam, "paid")) {
+            booking.setPaid(true);
+        } else if (Objects.equals(statusParam, "accepted")) {
+            booking.setAccepted(true);
+        } else {
+            booking.setJobStatus(booking.isJobStatus());
+            booking.setAccepted(booking.isAccepted());
+            booking.setPaid(booking.isPaid());
+        }
         bookingRepository.save(booking);
         return true;
     }
@@ -208,13 +228,13 @@ public class BookingServiceImpl implements BookingService {
     private List<Booking> getBookingByJobStatus(User user, String statusParam) {
         log.info("Getting booking for user by job status");
         List<Booking> booking = null;
-        if (statusParam == "pending") {
+        if (Objects.equals(statusParam, "pending")) {
             booking = bookingRepository.findByUserAndDelFlagAndJobStatus(user, false, false);
-        } else if (statusParam == "done") {
+        } else if (Objects.equals(statusParam, "done")) {
             booking = bookingRepository.findByUserAndDelFlagAndJobStatus(user, false, true);
-        } else if (statusParam == "paid") {
+        } else if (Objects.equals(statusParam, "paid")) {
             booking = bookingRepository.findByUserAndDelFlagAndPaid(user, false, true);
-        } else if (statusParam == "accepted") {
+        } else if (Objects.equals(statusParam, "accepted")) {
             booking = bookingRepository.findByUserAndDelFlagAndAccepted(user, false, true);
         } else {
             booking = Collections.emptyList();
@@ -244,8 +264,11 @@ public class BookingServiceImpl implements BookingService {
         List<RoomDTOResponse> roomsDtoResponses = booking.getRooms().stream()
                 .map(roomService::getRoomDTOResponse).collect(Collectors.toList());
 
+        PlaceDTO place = placeService.getPlaceDTO(placeService.getPlace(booking.getUser(), booking.getPlaceId()));
+
         bookingDTOResponse.setRooms(roomsDtoResponses);
         bookingDTOResponse.setEmail(booking.getUser().getEmail());
+        bookingDTOResponse.setPlace(place);
         return bookingDTOResponse;
     }
 }

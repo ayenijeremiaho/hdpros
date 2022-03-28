@@ -19,7 +19,7 @@ public class BookingDTO {
 
     private String description;
 
-    private int placeId;
+    private Long placeId;
 
     private boolean jobStatus;
 

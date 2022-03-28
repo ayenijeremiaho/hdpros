@@ -1,6 +1,8 @@
 package com.hdpros.hdprosbackend.booking.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.hdpros.hdprosbackend.places.dto.PlaceDTO;
+import com.hdpros.hdprosbackend.places.model.Place;
 import com.hdpros.hdprosbackend.room.dto.RoomDTOResponse;
 import lombok.Data;
 
@@ -20,7 +22,7 @@ public class BookingDTOResponse {
 
     private String description;
 
-    private int placeId;
+    private PlaceDTO place;
 
     private boolean jobStatus;
 

@@ -29,12 +29,14 @@ public class Booking extends BaseEntity {
 
     private String description;
 
-    private int placeId;
+    private Long placeId;
 
     private boolean jobStatus = false;
 
+    @Column(name = "accepted", columnDefinition = "boolean default false")
     private boolean accepted = false;
 
+    @Column(name = "paid", columnDefinition = "boolean default false")
     private boolean paid = false;
 
     @ManyToOne(optional = false)

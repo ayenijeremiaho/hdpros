@@ -98,7 +98,8 @@ public class PlaceServiceImpl implements PlaceService {
         return true;
     }
 
-    private Place getPlace(User user, Long placeId) {
+    @Override
+    public Place getPlace(User user, Long placeId) {
         log.info("Getting place for user");
 
         Place place = placeRepository.findByUserAndIdAndDelFlag(user, placeId, false);
@@ -108,7 +109,8 @@ public class PlaceServiceImpl implements PlaceService {
         return place;
     }
 
-    private PlaceDTO getPlaceDTO(Place place) {
+    @Override
+    public PlaceDTO getPlaceDTO(Place place) {
         log.info("Converting Place to Place DTO");
 
         PlaceDTO placeDTO = new PlaceDTO();

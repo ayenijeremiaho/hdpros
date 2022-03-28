@@ -66,14 +66,14 @@ public class BookingController {
     }
 
     @PostMapping("/jobStatus/{BookingId}")
-    public Response updateBookingJobStatus(@ApiIgnore Principal principal, @PathVariable Long BookingId) {
-        boolean response = bookingService.updateBookingJobStatus(principal.getName(), BookingId);
+    public Response updateBookingJobStatus(@ApiIgnore Principal principal, @PathVariable Long BookingId, @RequestParam(name = "status", defaultValue = "pending") String status) {
+        boolean response = bookingService.updateBookingJobStatus(principal.getName(), BookingId, status);
 
         return generalService.prepareSuccessResponse(response);
     }
 
     @PostMapping("/jobStatus")
-    public Response getBookingByJobStatus(@ApiIgnore Principal principal, @RequestParam(name = "status") String status) {
+    public Response getBookingByJobStatus(@ApiIgnore Principal principal, @RequestParam(name = "status", defaultValue = "pending") String status) {
 
         List<BookingDTOResponse> response = bookingService.getBookingForUserByStatus(principal.getName(), status);
 
