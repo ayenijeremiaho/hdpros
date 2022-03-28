@@ -10,8 +10,6 @@ import java.util.List;
 
 public interface RoomService {
 
-    List<MultipartFile> convertToMultipart(List<String> base64);
-
     RoomDTOResponse saveRoom(RoomDTORequest dto);
 
     RoomDTOResponse updateRoom(RoomDTORequest dto);
@@ -21,4 +19,8 @@ public interface RoomService {
     boolean deleteRoom(String email, Long roomId);
 
     RoomDTOResponse getSingleRoomForUser(String email, Long roomId);
+
+    Room getRoom(User user, Long roomId);
+
+    RoomDTOResponse getRoomDTOResponse(Room room);
 }

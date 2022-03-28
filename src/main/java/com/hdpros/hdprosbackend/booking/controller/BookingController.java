@@ -1,9 +1,11 @@
 package com.hdpros.hdprosbackend.booking.controller;
 
 import com.hdpros.hdprosbackend.booking.dto.BookingDTO;
+import com.hdpros.hdprosbackend.booking.dto.BookingDTOResponse;
 import com.hdpros.hdprosbackend.booking.service.BookingService;
 import com.hdpros.hdprosbackend.general.GeneralService;
 import com.hdpros.hdprosbackend.general.Response;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -27,7 +29,7 @@ public class BookingController {
         //update the email of the user to that of the logged-in user
         bookingDTO.setEmail(principal.getName());
 
-        BookingDTO response = bookingService.saveBooking(bookingDTO);
+        BookingDTOResponse response = bookingService.saveBooking(bookingDTO);
 
         return generalService.prepareSuccessResponse(response);
     }
@@ -37,7 +39,7 @@ public class BookingController {
         //update the email of the user to that of the logged-in user
         bookingDTO.setEmail(principal.getName());
 
-        BookingDTO response = bookingService.updateBooking(bookingDTO);
+        BookingDTOResponse response = bookingService.updateBooking(bookingDTO);
 
         return generalService.prepareSuccessResponse(response);
     }
@@ -51,21 +53,29 @@ public class BookingController {
 
     @PostMapping("/all")
     public Response allBookings(@ApiIgnore Principal principal) {
-        List<BookingDTO> response = bookingService.getBookingForUser(principal.getName());
+        List<BookingDTOResponse> response = bookingService.getBookingForUser(principal.getName());
 
         return generalService.prepareSuccessResponse(response);
     }
 
     @PostMapping("/{bookingId}")
     public Response getSingleBooking(@ApiIgnore Principal principal, @PathVariable Long bookingId) {
-        BookingDTO response = bookingService.getSingleBookingForUser(principal.getName(), bookingId);
+        BookingDTOResponse response = bookingService.getSingleBookingForUser(principal.getName(), bookingId);
 
         return generalService.prepareSuccessResponse(response);
     }
 
     @PostMapping("/jobStatus/{BookingId}")
     public Response updateBookingJobStatus(@ApiIgnore Principal principal, @PathVariable Long BookingId) {
-        boolean response = bookingService.deleteBooking(principal.getName(), BookingId);
+        boolean response = bookingService.updateBookingJobStatus(principal.getName(), BookingId);
+
+        return generalService.prepareSuccessResponse(response);
+    }
+
+    @PostMapping("/jobStatus")
+    public Response getBookingByJobStatus(@ApiIgnore Principal principal, @RequestParam(name = "status") String status) {
+
+        List<BookingDTOResponse> response = bookingService.getBookingForUserByStatus(principal.getName(), status);
 
         return generalService.prepareSuccessResponse(response);
     }

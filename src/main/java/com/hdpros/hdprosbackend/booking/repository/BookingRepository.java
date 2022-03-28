@@ -15,4 +15,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByUserAndDelFlag(User user, boolean delFlag);
 
     Booking findByUserAndIdAndDelFlag(User user, Long id, boolean delFlag);
+
+    List<Booking> findByUserAndDelFlagAndJobStatus(User user, boolean delFlag, boolean jobStatus);
+
+    List<Booking> findByUserAndDelFlagAndAccepted(User user, boolean delFlag, boolean accepted);
+
+    List<Booking> findByUserAndDelFlagAndPaid(User user, boolean delFlag, boolean paid);
 }

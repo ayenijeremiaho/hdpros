@@ -33,12 +33,16 @@ public class Booking extends BaseEntity {
 
     private boolean jobStatus = false;
 
+    private boolean accepted = false;
+
+    private boolean paid = false;
+
     @ManyToOne(optional = false)
     private User user;
 
     private boolean delFlag = false;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Room> rooms;
 
     public void setRooms(Room room) {

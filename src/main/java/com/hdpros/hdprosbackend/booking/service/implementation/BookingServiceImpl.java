@@ -1,18 +1,23 @@
 package com.hdpros.hdprosbackend.booking.service.implementation;
 
 import com.hdpros.hdprosbackend.booking.dto.BookingDTO;
+import com.hdpros.hdprosbackend.booking.dto.BookingDTOResponse;
 import com.hdpros.hdprosbackend.booking.model.Booking;
 import com.hdpros.hdprosbackend.booking.repository.BookingRepository;
 import com.hdpros.hdprosbackend.booking.service.BookingService;
 import com.hdpros.hdprosbackend.exceptions.GeneralException;
 import com.hdpros.hdprosbackend.general.GeneralService;
+import com.hdpros.hdprosbackend.room.dto.RoomDTOResponse;
 import com.hdpros.hdprosbackend.room.model.Room;
+import com.hdpros.hdprosbackend.room.service.RoomService;
 import com.hdpros.hdprosbackend.user.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -21,23 +26,30 @@ import java.util.stream.Collectors;
 @Service
 public class BookingServiceImpl implements BookingService {
 
+    @Value("${record.count}")
+    private int count;
+
+    private final RoomService roomService;
     private final GeneralService generalService;
     private final BookingRepository bookingRepository;
 
-    public BookingServiceImpl(GeneralService generalService, BookingRepository bookingRepository) {
+    public BookingServiceImpl(RoomService roomService, GeneralService generalService, BookingRepository bookingRepository) {
+        this.roomService = roomService;
         this.generalService = generalService;
         this.bookingRepository = bookingRepository;
     }
 
     @Override
-    public BookingDTO saveBooking(BookingDTO dto) {
+    public BookingDTOResponse saveBooking(BookingDTO dto) {
         log.info("Saving booking for user");
 
         User user = generalService.getUser(dto.getEmail());
 
-        if (bookingRepository.countAllByUserAndDelFlag(user, false) > 5) {
-            throw new GeneralException("User can only save upto 5 bookings");
+        if (bookingRepository.countAllByUserAndDelFlag(user, false) > count) {
+            throw new GeneralException("User can only save upto " + count + " bookings");
         }
+
+        BookingDTOResponse response = new BookingDTOResponse();
 
         if (!bookingRepository.existsByDescriptionAndUserAndDelFlag(dto.getDescription(), user, false)) {
 
@@ -47,20 +59,38 @@ public class BookingServiceImpl implements BookingService {
             booking.setUser(user);
             booking.setCreatedAt(LocalDateTime.now());
 
-            //get id
-            dto.setId(booking.getId());
+            List<Room> rooms = getRooms(dto.getRoomId(), user);
 
-            bookingRepository.save(booking);
-            return dto;
+            booking.setRooms(rooms);
+            booking = bookingRepository.save(booking);
+
+            //get id
+            BeanUtils.copyProperties(dto, response);
+            response.setId(booking.getId());
+
+            List<RoomDTOResponse> roomDTOResponses = getRoomsDTO(rooms);
+            response.setRooms(roomDTOResponses);
+
+            return response;
         }
         throw new GeneralException("booking with description already created for user");
     }
 
+    private List<RoomDTOResponse> getRoomsDTO(List<Room> rooms) {
+        return rooms.stream().map(roomService::getRoomDTOResponse).collect(Collectors.toList());
+    }
+
+    private List<Room> getRooms(List<Long> roomIds, User user) {
+        return roomIds.stream().map(roomId -> roomService.getRoom(user, roomId)).collect(Collectors.toList());
+    }
+
     @Override
-    public BookingDTO updateBooking(BookingDTO dto) {
+    public BookingDTOResponse updateBooking(BookingDTO dto) {
         log.info("Updating booking for user");
 
         User user = generalService.getUser(dto.getEmail());
+
+        BookingDTOResponse response = new BookingDTOResponse();
 
         Booking booking = getBooking(user, dto.getId());
 
@@ -70,23 +100,43 @@ public class BookingServiceImpl implements BookingService {
         booking.setStartDate(dto.getStartDate());
         booking.setStartTime(dto.getStartTime());
         booking.setJobStatus(dto.isJobStatus());
-        booking.setRooms((Room) dto.getRoomId());
+
+        List<Room> rooms = getRooms(dto.getRoomId(), user);
+
+        booking.setRooms(rooms);
         booking.setUpdatedAt(LocalDateTime.now());
 
         Booking updateBooking = bookingRepository.save(booking);
-        return getBookingDTO(updateBooking);
+
+        //get dto properties into DTOResponse
+        BeanUtils.copyProperties(dto, response);
+
+        List<RoomDTOResponse> roomDTOResponses = getRoomsDTO(rooms);
+        response.setRooms(roomDTOResponses);
+
+        return response;
     }
 
-
     @Override
-    public List<BookingDTO> getBookingForUser(String email) {
+    public List<BookingDTOResponse> getBookingForUser(String email) {
         log.info("Getting bookings for user");
 
         User user = generalService.getUser(email);
 
         List<Booking> bookings = bookingRepository.findByUserAndDelFlag(user, false);
 
-        return bookings.stream().map(this::getBookingDTO).collect(Collectors.toList());
+        return bookings.stream().map(this::getBookingDTOResponse).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BookingDTOResponse> getBookingForUserByStatus(String email, String statusParam) {
+        log.info("Getting bookings for user");
+
+        User user = generalService.getUser(email);
+
+        List<Booking> bookings = getBookingByJobStatus(user, statusParam);
+
+        return bookings.stream().map(this::getBookingDTOResponse).collect(Collectors.toList());
     }
 
     @Override
@@ -118,23 +168,62 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingDTO getSingleBookingForUser(String email, Long bookingId) {
+    public BookingDTOResponse getSingleBookingForUser(String email, Long bookingId) {
         log.info("Getting Single booking for user");
 
         User user = generalService.getUser(email);
 
-        Booking booking = getBooking(user, bookingId);
+        BookingDTO dto = new BookingDTO();
 
-        return getBookingDTO(booking);
+        BookingDTOResponse response = getBookingDTOResponse(getBooking(user, bookingId));
+
+        BeanUtils.copyProperties(response, dto);
+
+        System.out.println(dto.getRoomId());
+        System.out.println(response.getId());
+        System.out.println(response.getRooms());
+
+//        List<Room> rooms = getRooms(response.getRoomId(), user);
+
+        //get id
+        response.setId(response.getId());
+        response.setEmail(email);
+
+//        List<RoomDTOResponse> roomDTOResponses = getRoomsDTO(rooms);
+//        response.setRooms(roomDTOResponses);
+
+        return response;
     }
 
     private Booking getBooking(User user, Long bookingId) {
-        log.info("Getting Room for user");
+        log.info("Getting booking for user");
 
         Booking booking = bookingRepository.findByUserAndIdAndDelFlag(user, bookingId, false);
         if (Objects.isNull(booking)) {
             throw new GeneralException("Invalid Request");
         }
+        return booking;
+    }
+
+    private List<Booking> getBookingByJobStatus(User user, String statusParam) {
+        log.info("Getting booking for user by job status");
+        List<Booking> booking = null;
+        if (statusParam == "pending") {
+            booking = bookingRepository.findByUserAndDelFlagAndJobStatus(user, false, false);
+        } else if (statusParam == "done") {
+            booking = bookingRepository.findByUserAndDelFlagAndJobStatus(user, false, true);
+        } else if (statusParam == "paid") {
+            booking = bookingRepository.findByUserAndDelFlagAndPaid(user, false, true);
+        } else if (statusParam == "accepted") {
+            booking = bookingRepository.findByUserAndDelFlagAndAccepted(user, false, true);
+        } else {
+            booking = Collections.emptyList();
+        }
+
+        if (Objects.isNull(booking)) {
+            throw new GeneralException("Invalid Request");
+        }
+
         return booking;
     }
 
@@ -144,5 +233,19 @@ public class BookingServiceImpl implements BookingService {
         BookingDTO bookingDTO = new BookingDTO();
         BeanUtils.copyProperties(booking, bookingDTO);
         return bookingDTO;
+    }
+
+    private BookingDTOResponse getBookingDTOResponse(Booking booking) {
+        log.info("Converting Booking to Booking DTO Response");
+
+        BookingDTOResponse bookingDTOResponse = new BookingDTOResponse();
+        BeanUtils.copyProperties(booking, bookingDTOResponse);
+
+        List<RoomDTOResponse> roomsDtoResponses = booking.getRooms().stream()
+                .map(roomService::getRoomDTOResponse).collect(Collectors.toList());
+
+        bookingDTOResponse.setRooms(roomsDtoResponses);
+        bookingDTOResponse.setEmail(booking.getUser().getEmail());
+        return bookingDTOResponse;
     }
 }

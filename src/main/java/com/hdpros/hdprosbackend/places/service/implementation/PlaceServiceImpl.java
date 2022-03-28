@@ -9,6 +9,7 @@ import com.hdpros.hdprosbackend.places.service.PlaceService;
 import com.hdpros.hdprosbackend.user.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class PlaceServiceImpl implements PlaceService {
+
+    @Value("${record.count}")
+    private int count;
 
     private final GeneralService generalService;
     private final PlaceRepository placeRepository;
@@ -34,7 +38,7 @@ public class PlaceServiceImpl implements PlaceService {
 
         User user = generalService.getUser(dto.getEmail());
 
-        if (placeRepository.countAllByUserAndDelFlag(user, false) > 5) {
+        if (placeRepository.countAllByUserAndDelFlag(user, false) > count) {
             throw new GeneralException("User can only save upto 5 places");
         }
 

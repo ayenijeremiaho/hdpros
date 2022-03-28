@@ -14,6 +14,7 @@ import com.hdpros.hdprosbackend.user.model.User;
 import com.hdpros.hdprosbackend.utils.GeneralUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,6 +29,9 @@ import java.util.stream.Collectors;
 @Service
 public class RoomServiceImpl implements RoomService {
 
+    @Value("${record.count}")
+    private int count;
+
     private final GeneralService generalService;
     private final RoomRepository roomRepository;
     private final ImageService imageService;
@@ -41,31 +45,12 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<MultipartFile> convertToMultipart(List<String> base64) {
-        if (GeneralUtil.listIsEmpty(base64)) {
-            return null;
-        }
-
-        List<MultipartFile> files = new ArrayList<>();
-
-        base64.forEach(s -> {
-            MultipartFile file = GeneralUtil.base64ToMultipart(s);
-            if (Objects.isNull(file)) {
-                throw new GeneralException("Invalid image, please re-upload");
-            }
-            files.add(file);
-        });
-
-        return files;
-    }
-
-    @Override
     public RoomDTOResponse saveRoom(RoomDTORequest dto) {
         log.info("Saving room for user");
 
         User user = generalService.getUser(dto.getEmail());
 
-        if (roomRepository.countAllByUserAndDelFlag(user, false) > 10) {
+        if (roomRepository.countAllByUserAndDelFlag(user, false) > count) {
             throw new GeneralException("User can only save upto 5 room");
         }
 
@@ -102,7 +87,6 @@ public class RoomServiceImpl implements RoomService {
         throw new GeneralException("room with description already created for user");
     }
 
-
     @Override
     public RoomDTOResponse updateRoom(RoomDTORequest dto) {
         log.info("Updating room for user");
@@ -130,7 +114,6 @@ public class RoomServiceImpl implements RoomService {
         response.setAvatar(imagesUrl);
         return response;
     }
-
 
     @Override
     public List<RoomDTOResponse> getRoomForUser(String email) {
@@ -167,7 +150,8 @@ public class RoomServiceImpl implements RoomService {
         return getRoomDTOResponse(room);
     }
 
-    private Room getRoom(User user, Long roomId) {
+    @Override
+    public Room getRoom(User user, Long roomId) {
         log.info("Getting Room for user");
 
         Room room = roomRepository.findByUserAndIdAndDelFlag(user, roomId, false);
@@ -177,7 +161,8 @@ public class RoomServiceImpl implements RoomService {
         return room;
     }
 
-    private RoomDTOResponse getRoomDTOResponse(Room room) {
+    @Override
+    public RoomDTOResponse getRoomDTOResponse(Room room) {
         log.info("Converting Room to Room DTO");
 
         RoomDTOResponse dtoResponse = new RoomDTOResponse();
