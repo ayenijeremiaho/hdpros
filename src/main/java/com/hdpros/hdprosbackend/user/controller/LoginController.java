@@ -28,7 +28,6 @@ public class LoginController {
         LoginUserResponse userResponse = loginService.loginUser(userRequest);
 
         return generalService.prepareSuccessResponse(userResponse);
-
     }
 
     @PostMapping("/resetPassword")
@@ -37,7 +36,6 @@ public class LoginController {
         boolean status = loginService.resetPassword(userRequest);
 
         return generalService.prepareSuccessResponse(status);
-
     }
 
 }
