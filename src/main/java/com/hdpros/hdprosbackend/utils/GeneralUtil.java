@@ -97,6 +97,7 @@ public class GeneralUtil {
     public static void main(String[] args) {
         String reference = "test_20191123132233";
 
+//        System.out.println(generateRandomWord(5));
         //for backend test
 //        String toHash = reference + "1617953042";
 //        String hashed = sha512(toHash);

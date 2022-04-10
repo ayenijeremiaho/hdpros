@@ -9,12 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import springfox.documentation.annotations.ApiIgnore;
-
-import java.security.Principal;
 
 @RestController
-@RequestMapping("/api/v1/login")
+@RequestMapping("/api/v1")
 public class LoginController {
 
     private final GeneralService generalService;
@@ -25,7 +22,7 @@ public class LoginController {
         this.loginService = loginService;
     }
 
-    @PostMapping()
+    @PostMapping("/login")
     public Response getUser(@RequestBody LoginUserRequest userRequest) {
 
         LoginUserResponse userResponse = loginService.loginUser(userRequest);
@@ -33,4 +30,14 @@ public class LoginController {
         return generalService.prepareSuccessResponse(userResponse);
 
     }
+
+    @PostMapping("/resetPassword")
+    public Response resetPassword(@RequestBody LoginUserRequest userRequest) {
+
+        boolean status = loginService.resetPassword(userRequest);
+
+        return generalService.prepareSuccessResponse(status);
+
+    }
+
 }

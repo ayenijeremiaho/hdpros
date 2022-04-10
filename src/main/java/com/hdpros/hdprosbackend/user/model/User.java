@@ -37,6 +37,9 @@ public class User {
 
     private boolean delFlag;
 
+    @Column(name = "changePassword", columnDefinition = "boolean default false")
+    private boolean changePassword;
+
     @OneToOne(fetch = FetchType.LAZY)
     private BvnDetails bvnDetails;
 

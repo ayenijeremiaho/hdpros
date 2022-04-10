@@ -1,11 +1,13 @@
 package com.hdpros.hdprosbackend.user.service.implementation;
 
 import com.hdpros.hdprosbackend.exceptions.GeneralException;
-import com.hdpros.hdprosbackend.user.dto.RegisterUserRequest;
-import com.hdpros.hdprosbackend.user.service.UserService;
 import com.hdpros.hdprosbackend.user.Repository.UserRepository;
+import com.hdpros.hdprosbackend.user.dto.RegisterUserRequest;
+import com.hdpros.hdprosbackend.user.dto.UpdatePasswordRequest;
 import com.hdpros.hdprosbackend.user.model.User;
+import com.hdpros.hdprosbackend.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -37,9 +39,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByEmail(String email){
-         return Optional.of(userRepository.findByEmailAndDelFlag(email, false))
-                 .orElseThrow(() -> new GeneralException("Invalid User"));
+    public boolean updatePassword(String email, UpdatePasswordRequest request) {
+        User user = getUserByEmail(email);
+
+        user.setChangePassword(false);
+        user.setPassword(new BCryptPasswordEncoder().encode(request.getNewPassword()));
+
+        userRepository.save(user);
+        return true;
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return Optional.of(userRepository.findByEmailAndDelFlag(email, false))
+                .orElseThrow(() -> new GeneralException("Invalid User"));
     }
 
     @Override

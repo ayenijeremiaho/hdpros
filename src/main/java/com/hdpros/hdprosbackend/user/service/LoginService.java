@@ -7,4 +7,5 @@ public interface LoginService {
 
     LoginUserResponse loginUser(LoginUserRequest request);
 
+    boolean resetPassword(LoginUserRequest request);
 }
