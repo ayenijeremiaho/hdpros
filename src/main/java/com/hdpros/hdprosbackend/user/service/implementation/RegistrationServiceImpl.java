@@ -83,6 +83,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         //generate and set password
         String password = GeneralUtil.generateRandomWord(10);
         user.setPassword(new BCryptPasswordEncoder().encode(password));
+        user.setChangePassword(true);
 
         user = userService.saveUser(user);
 
