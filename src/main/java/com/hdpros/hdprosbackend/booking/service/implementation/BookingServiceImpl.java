@@ -201,9 +201,17 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = getBooking(user, bookingId);
 
         if (Objects.equals(statusParam, "pending")) {
-            booking.setJobStatus(false);
+            if (!generalService.isProvider(email)) {
+                booking.setJobStatus(false);
+            } else {
+                throw new GeneralException("User not allow to update this status");
+            }
         } else if (Objects.equals(statusParam, "done")) {
-            booking.setJobStatus(true);
+            if (!generalService.isProvider(email)) {
+                booking.setJobStatus(true);
+            } else {
+                throw new GeneralException("User not allow to update this status");
+            }
         } else if (Objects.equals(statusParam, "paid")) {
             if (!generalService.isProvider(email)) {
                 throw new GeneralException("User not allow to update this status");
