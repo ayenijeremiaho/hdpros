@@ -189,12 +189,8 @@ public class BookingServiceImpl implements BookingService {
 
         if (Objects.equals(statusParam, "pending")) {
             booking.setJobStatus(false);
-            booking.setAccepted(false);
-            booking.setPaid(false);
         } else if (Objects.equals(statusParam, "done")) {
             booking.setJobStatus(true);
-            booking.setAccepted(true);
-            booking.setPaid(true);
         } else if (Objects.equals(statusParam, "paid")) {
             booking.setPaid(true);
         } else if (Objects.equals(statusParam, "accepted")) {
@@ -241,13 +237,13 @@ public class BookingServiceImpl implements BookingService {
         log.info("Getting booking for user by job status");
         List<Booking> booking = null;
         if (Objects.equals(statusParam, "pending")) {
-            booking = bookingRepository.findByUserAndDelFlagAndJobStatus(user, false, false);
+            booking = bookingRepository.findByUserAndDelFlagAndJobStatusAndPaidAndAccepted(user, false, false, false, false);
         } else if (Objects.equals(statusParam, "done")) {
-            booking = bookingRepository.findByUserAndDelFlagAndJobStatus(user, false, true);
+            booking = bookingRepository.findByUserAndDelFlagAndJobStatusAndPaidAndAccepted(user, false, true, true, true);
         } else if (Objects.equals(statusParam, "paid")) {
-            booking = bookingRepository.findByUserAndDelFlagAndPaid(user, false, true);
+            booking = bookingRepository.findByUserAndDelFlagAndJobStatusAndPaidAndAccepted(user, false, false, true, true);
         } else if (Objects.equals(statusParam, "accepted")) {
-            booking = bookingRepository.findByUserAndDelFlagAndAccepted(user, false, true);
+            booking = bookingRepository.findByUserAndDelFlagAndJobStatusAndPaidAndAccepted(user, false, false, false, true);
         } else {
             booking = Collections.emptyList();
         }

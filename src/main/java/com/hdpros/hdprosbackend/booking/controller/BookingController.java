@@ -5,7 +5,6 @@ import com.hdpros.hdprosbackend.booking.dto.BookingDTOResponse;
 import com.hdpros.hdprosbackend.booking.service.BookingService;
 import com.hdpros.hdprosbackend.general.GeneralService;
 import com.hdpros.hdprosbackend.general.Response;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
