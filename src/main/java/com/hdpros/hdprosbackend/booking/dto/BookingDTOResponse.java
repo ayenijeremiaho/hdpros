@@ -24,11 +24,13 @@ public class BookingDTOResponse {
 
     private PlaceDTO place;
 
-    private boolean jobStatus;
+    private String jobStatus = "Pending";
 
     private List<RoomDTOResponse> rooms;
 
     private String email;
 
     private Long id;
+
+    private double amount = 0.00;
 }
