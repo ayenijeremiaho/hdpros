@@ -11,4 +11,6 @@ public interface UserService {
     User saveUser(User user);
 
     boolean userExistByEmail(String email);
+
+    boolean isProvider(String email);
 }

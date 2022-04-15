@@ -26,4 +26,6 @@ public interface GeneralService {
     Response prepareSuccessResponse(Object data);
 
     User getUser(String email);
+
+    boolean isProvider(String email);
 }

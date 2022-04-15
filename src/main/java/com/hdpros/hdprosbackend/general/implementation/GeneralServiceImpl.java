@@ -134,4 +134,9 @@ public class GeneralServiceImpl implements GeneralService {
         return Optional.of(userService.getUserByEmail(email)).orElseThrow(() -> new GeneralException("Invalid username/email"));
     }
 
+    @Override
+    public boolean isProvider(String email) {
+        log.info("Checking if user is a provider => {}", email);
+        return userService.isProvider(email);
+    }
 }

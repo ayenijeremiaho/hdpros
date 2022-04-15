@@ -8,4 +8,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByEmailAndDelFlag(String email, boolean delFlag);
 
+    boolean existsByEmailAndServiceProvider(String email, boolean service_provider);
+
 }

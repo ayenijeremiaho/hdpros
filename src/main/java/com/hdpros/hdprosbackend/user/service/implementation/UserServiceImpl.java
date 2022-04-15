@@ -66,4 +66,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByEmail(email);
     }
 
+    @Override
+    public boolean isProvider(String email) {
+        return userRepository.existsByEmailAndServiceProvider(email, true);
+    }
+
 }

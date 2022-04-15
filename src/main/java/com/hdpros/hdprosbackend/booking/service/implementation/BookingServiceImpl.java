@@ -165,6 +165,21 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public List<BookingDTOResponse> getBookingForProviderByJobStatus(String email, String statusParam) {
+        log.info("Getting bookings for provider");
+
+        if (!generalService.isProvider(email)) {
+            throw new GeneralException("User is not provider");
+        }
+
+        User user = generalService.getUser(email);
+
+        List<Booking> bookings = getBookingByJobStatusAll(user, statusParam);
+
+        return bookings.stream().map(this::getBookingDTOResponse).collect(Collectors.toList());
+    }
+
+    @Override
     public boolean deleteBooking(String email, Long bookingId) {
         log.info("Deleting booking for user");
 
@@ -183,8 +198,6 @@ public class BookingServiceImpl implements BookingService {
 
         User user = generalService.getUser(email);
 
-        //confirm user is not a service provider
-
         Booking booking = getBooking(user, bookingId);
 
         if (Objects.equals(statusParam, "pending")) {
@@ -192,9 +205,17 @@ public class BookingServiceImpl implements BookingService {
         } else if (Objects.equals(statusParam, "done")) {
             booking.setJobStatus(true);
         } else if (Objects.equals(statusParam, "paid")) {
-            booking.setPaid(true);
+            if (!generalService.isProvider(email)) {
+                throw new GeneralException("User not allow to update this status");
+            } else {
+                booking.setPaid(true);
+            }
         } else if (Objects.equals(statusParam, "accepted")) {
-            booking.setAccepted(true);
+            if (!generalService.isProvider(email)) {
+                throw new GeneralException("User not allow to update this status");
+            } else {
+                booking.setAccepted(true);
+            }
         } else {
             booking.setJobStatus(booking.isJobStatus());
             booking.setAccepted(booking.isAccepted());
@@ -250,6 +271,25 @@ public class BookingServiceImpl implements BookingService {
 
         if (Objects.isNull(booking)) {
             throw new GeneralException("Invalid Request");
+        }
+
+        return booking;
+    }
+
+    private List<Booking> getBookingByJobStatusAll(User user, String statusParam) {
+        log.info("Getting booking for provider by job status");
+
+        List<Booking> booking = null;
+        if (Objects.equals(statusParam, "pending")) {
+            booking = bookingRepository.findByJobStatusAndPaidAndAcceptedAndDelFlag(false, false, false, false);
+        } else if (Objects.equals(statusParam, "done")) {
+            booking = bookingRepository.findByJobStatusAndPaidAndAcceptedAndDelFlag(true, true, true, false);
+        } else if (Objects.equals(statusParam, "paid")) {
+            booking = bookingRepository.findByJobStatusAndPaidAndAcceptedAndDelFlag(false, true, true, false);
+        } else if (Objects.equals(statusParam, "accepted")) {
+            booking = bookingRepository.findByJobStatusAndPaidAndAcceptedAndDelFlag(false, false, true, false);
+        } else {
+            booking = Collections.emptyList();
         }
 
         return booking;
