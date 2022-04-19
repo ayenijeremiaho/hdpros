@@ -23,5 +23,7 @@ public class LoginUserResponse {
 
     private boolean serviceProvider;
 
+    private boolean changePassword;
+
     private String avatar;
 }

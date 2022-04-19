@@ -176,7 +176,7 @@ public class BookingServiceImpl implements BookingService {
 
         List<Booking> bookings = getBookingByJobStatusAll(user, statusParam);
 
-        return bookings.stream().map(this::getBookingDTOResponse).collect(Collectors.toList());
+        return bookings.stream().map(this::getBookingDTOResponseForProvider).collect(Collectors.toList());
     }
 
     @Override
@@ -331,6 +331,39 @@ public class BookingServiceImpl implements BookingService {
                 .map(roomService::getRoomDTOResponse).collect(Collectors.toList());
 
         double sum = roomsDtoResponses.stream().filter(o -> o.getPrice() > 10).mapToDouble(RoomDTOResponse::getPrice).sum();
+
+        PlaceDTO place = placeService.getPlaceDTO(placeService.getPlace(booking.getUser(), booking.getPlaceId()));
+
+        bookingDTOResponse.setRooms(roomsDtoResponses);
+        bookingDTOResponse.setEmail(booking.getUser().getEmail());
+        bookingDTOResponse.setPlace(place);
+        bookingDTOResponse.setAmount(sum);
+
+        return bookingDTOResponse;
+    }
+
+    private BookingDTOResponse getBookingDTOResponseForProvider(Booking booking) {
+        log.info("Converting Booking to Booking DTO Response for provider");
+
+        BookingDTOResponse bookingDTOResponse = new BookingDTOResponse();
+        BeanUtils.copyProperties(booking, bookingDTOResponse);
+
+        if (Objects.equals(booking.isJobStatus(), true) && Objects.equals(booking.isAccepted(), true) && Objects.equals(booking.isPaid(), true)) {
+            bookingDTOResponse.setJobStatus("Done");
+        } else if (Objects.equals(booking.isPaid(), true) && Objects.equals(booking.isAccepted(), true)) {
+            bookingDTOResponse.setJobStatus("Paid");
+        } else if (Objects.equals(booking.isAccepted(), true)) {
+            bookingDTOResponse.setJobStatus("Accepted");
+        } else {
+            bookingDTOResponse.setJobStatus("Pending");
+        }
+
+        List<RoomDTOResponse> roomsDtoResponses = booking.getRooms().stream()
+                .map(roomService::getRoomDTOResponse).collect(Collectors.toList());
+
+        double sum = roomsDtoResponses.stream().filter(o -> o.getPrice() > 10).mapToDouble(RoomDTOResponse::getPrice).sum();
+
+        sum = sum * 0.9;
 
         PlaceDTO place = placeService.getPlaceDTO(placeService.getPlace(booking.getUser(), booking.getPlaceId()));
 
