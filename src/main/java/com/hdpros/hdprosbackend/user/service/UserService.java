@@ -13,4 +13,6 @@ public interface UserService {
     boolean userExistByEmail(String email);
 
     boolean isProvider(String email);
+
+    boolean changePassword(String email, String password);
 }

@@ -13,7 +13,6 @@ import com.hdpros.hdprosbackend.utils.GeneralUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -25,12 +24,11 @@ import java.util.Objects;
 @Service
 public class LoginServiceImpl implements LoginService {
 
-    @Value("${mailing-list}")
-    private List<String> mailingList;
-
     private final MailService mailService;
     private final UserService userService;
     private final ImageService imageService;
+    @Value("${mailing-list}")
+    private List<String> mailingList;
 
     public LoginServiceImpl(MailService mailService, UserService userService, ImageService imageService) {
         this.mailService = mailService;
@@ -58,18 +56,20 @@ public class LoginServiceImpl implements LoginService {
         User user = getUser(request);
 
         String password = GeneralUtil.generateRandomWord(6);
-        user.setChangePassword(true);
-        user.setPassword(new BCryptPasswordEncoder().encode(password));
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("userName", user.getEmail());
-        map.put("password", password);
+        if (userService.changePassword(user.getEmail(), password)) {
 
-        //send mail to user
-        String[] copy = mailingList.toArray(new String[0]);
+            Map<String, Object> map = new HashMap<>();
+            map.put("userName", user.getEmail());
+            map.put("password", password);
 
-        mailService.sendMail("Reset Password", user.getEmail(), copy, map, "reset_password");
+            //send mail to user
+            String[] copy = mailingList.toArray(new String[0]);
 
+            mailService.sendMail("Reset Password", user.getEmail(), copy, map, "reset_password");
+        } else {
+            return false;
+        }
         return true;
     }
 

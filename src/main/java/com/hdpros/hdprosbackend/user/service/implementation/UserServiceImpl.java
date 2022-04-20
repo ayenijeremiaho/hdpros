@@ -50,6 +50,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean changePassword(String email, String password) {
+        User user = getUserByEmail(email);
+
+        user.setChangePassword(true);
+        user.setPassword(new BCryptPasswordEncoder().encode(password));
+
+        userRepository.save(user);
+
+        return true;
+    }
+
+    @Override
     public User getUserByEmail(String email) {
         return Optional.of(userRepository.findByEmailAndDelFlag(email, false))
                 .orElseThrow(() -> new GeneralException("Invalid User"));
