@@ -39,8 +39,19 @@ public class Booking extends BaseEntity {
     @Column(name = "paid", columnDefinition = "boolean default false")
     private boolean paid = false;
 
+    @Column(name = "in_progress", columnDefinition = "boolean default false")
+    private boolean in_progress = false;
+
+    @Column(name = "processing_payment", columnDefinition = "boolean default false")
+    private boolean processing_payment = false;
+
+    @Column(name = "completed", columnDefinition = "boolean default false")
+    private boolean completed = false;
+
     @ManyToOne(optional = false)
     private User user;
+
+    private Long provider_id;
 
     private boolean delFlag = false;
 

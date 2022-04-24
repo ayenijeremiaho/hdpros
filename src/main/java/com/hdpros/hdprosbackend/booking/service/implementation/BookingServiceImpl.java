@@ -197,37 +197,53 @@ public class BookingServiceImpl implements BookingService {
         log.info("Updating booking job status for user");
 
         User user = generalService.getUser(email);
+        Booking booking;
+        Long bookingProviderId = null;
+        Long providerId = null;
 
-        Booking booking = getBooking(user, bookingId);
+        if (!generalService.isProvider(email)) {
+            booking = getBooking(user, bookingId);
+        } else {
+            booking = getBookingForProvider(bookingId);
+            bookingProviderId = booking.getProvider_id();
+            providerId = user.getId();
+        }
 
-        if (Objects.equals(statusParam, "pending")) {
-            if (!generalService.isProvider(email)) {
-                booking.setJobStatus(false);
+        if (Objects.equals(statusParam, "accepted")) {
+            if (!generalService.isProvider(email) && !booking.isJobStatus()) {
+                throw new GeneralException("User not allow to update this status");
+            } else {
+                booking.setAccepted(true);
+                booking.setProvider_id(user.getId());
+            }
+        } else if (Objects.equals(statusParam, "paid")) {
+            if (!generalService.isProvider(email) && booking.isAccepted()) {
+                booking.setPaid(true);
             } else {
                 throw new GeneralException("User not allow to update this status");
             }
+        } else if (Objects.equals(statusParam, "in_progress")) {
+            if (!generalService.isProvider(email) && !booking.isAccepted() && !booking.isPaid() && Objects.equals(!Objects.equals(bookingProviderId, null), !Objects.equals(providerId, null))) {
+                throw new GeneralException("User not allow to update this status");
+            } else {
+                booking.setIn_progress(true);
+            }
         } else if (Objects.equals(statusParam, "done")) {
-            if (!generalService.isProvider(email)) {
+            if (!generalService.isProvider(email) && booking.isAccepted() && booking.isPaid() && booking.isIn_progress()) {
                 booking.setJobStatus(true);
             } else {
                 throw new GeneralException("User not allow to update this status");
             }
-        } else if (Objects.equals(statusParam, "paid")) {
-            if (!generalService.isProvider(email)) {
-                throw new GeneralException("User not allow to update this status");
-            } else {
-                booking.setPaid(true);
+        } else if (Objects.equals(statusParam, "processing_payment")) {
+            if (booking.isAccepted() && booking.isPaid() && booking.isIn_progress() && booking.isJobStatus()) {
+                booking.setProcessing_payment(true);
             }
-        } else if (Objects.equals(statusParam, "accepted")) {
-            if (!generalService.isProvider(email)) {
-                throw new GeneralException("User not allow to update this status");
-            } else {
-                booking.setAccepted(true);
+        } else if (Objects.equals(statusParam, "completed")) {
+            if (booking.isAccepted() && booking.isPaid() && booking.isIn_progress() && booking.isJobStatus() && booking.isProcessing_payment()) {
+                booking.setCompleted(true);
             }
         } else {
-            booking.setJobStatus(booking.isJobStatus());
-            booking.setAccepted(booking.isAccepted());
-            booking.setPaid(booking.isPaid());
+            throw new GeneralException("Job status not defined");
         }
         bookingRepository.save(booking);
         return true;
@@ -256,6 +272,16 @@ public class BookingServiceImpl implements BookingService {
         log.info("Getting booking for user");
 
         Booking booking = bookingRepository.findByUserAndIdAndDelFlag(user, bookingId, false);
+        if (Objects.isNull(booking)) {
+            throw new GeneralException("Invalid Request");
+        }
+        return booking;
+    }
+
+    private Booking getBookingForProvider(Long bookingId) {
+        log.info("Getting booking for provider");
+
+        Booking booking = bookingRepository.findByIdAndDelFlag(bookingId, false);
         if (Objects.isNull(booking)) {
             throw new GeneralException("Invalid Request");
         }
@@ -317,8 +343,14 @@ public class BookingServiceImpl implements BookingService {
         BookingDTOResponse bookingDTOResponse = new BookingDTOResponse();
         BeanUtils.copyProperties(booking, bookingDTOResponse);
 
-        if (Objects.equals(booking.isJobStatus(), true) && Objects.equals(booking.isAccepted(), true) && Objects.equals(booking.isPaid(), true)) {
+        if (Objects.equals(booking.isCompleted(), true) && Objects.equals(booking.isProcessing_payment(), true) && Objects.equals(booking.isJobStatus(), true) && Objects.equals(booking.isIn_progress(), true) && Objects.equals(booking.isAccepted(), true) && Objects.equals(booking.isPaid(), true)) {
+            bookingDTOResponse.setJobStatus("Completed");
+        } else if (Objects.equals(booking.isProcessing_payment(), true) && Objects.equals(booking.isJobStatus(), true) && Objects.equals(booking.isIn_progress(), true) && Objects.equals(booking.isAccepted(), true) && Objects.equals(booking.isPaid(), true)) {
+            bookingDTOResponse.setJobStatus("Processing Payment");
+        } else if (Objects.equals(booking.isJobStatus(), true) && Objects.equals(booking.isIn_progress(), true) && Objects.equals(booking.isAccepted(), true) && Objects.equals(booking.isPaid(), true)) {
             bookingDTOResponse.setJobStatus("Done");
+        } else if (Objects.equals(booking.isIn_progress(), true) && Objects.equals(booking.isPaid(), true) && Objects.equals(booking.isAccepted(), true)) {
+            bookingDTOResponse.setJobStatus("In Progress");
         } else if (Objects.equals(booking.isPaid(), true) && Objects.equals(booking.isAccepted(), true)) {
             bookingDTOResponse.setJobStatus("Paid");
         } else if (Objects.equals(booking.isAccepted(), true)) {
@@ -348,8 +380,14 @@ public class BookingServiceImpl implements BookingService {
         BookingDTOResponse bookingDTOResponse = new BookingDTOResponse();
         BeanUtils.copyProperties(booking, bookingDTOResponse);
 
-        if (Objects.equals(booking.isJobStatus(), true) && Objects.equals(booking.isAccepted(), true) && Objects.equals(booking.isPaid(), true)) {
+        if (Objects.equals(booking.isCompleted(), true) && Objects.equals(booking.isProcessing_payment(), true) && Objects.equals(booking.isJobStatus(), true) && Objects.equals(booking.isIn_progress(), true) && Objects.equals(booking.isAccepted(), true) && Objects.equals(booking.isPaid(), true)) {
+            bookingDTOResponse.setJobStatus("Completed");
+        } else if (Objects.equals(booking.isProcessing_payment(), true) && Objects.equals(booking.isJobStatus(), true) && Objects.equals(booking.isIn_progress(), true) && Objects.equals(booking.isAccepted(), true) && Objects.equals(booking.isPaid(), true)) {
+            bookingDTOResponse.setJobStatus("Processing Payment");
+        } else if (Objects.equals(booking.isJobStatus(), true) && Objects.equals(booking.isIn_progress(), true) && Objects.equals(booking.isAccepted(), true) && Objects.equals(booking.isPaid(), true)) {
             bookingDTOResponse.setJobStatus("Done");
+        } else if (Objects.equals(booking.isIn_progress(), true) && Objects.equals(booking.isPaid(), true) && Objects.equals(booking.isAccepted(), true)) {
+            bookingDTOResponse.setJobStatus("In Progress");
         } else if (Objects.equals(booking.isPaid(), true) && Objects.equals(booking.isAccepted(), true)) {
             bookingDTOResponse.setJobStatus("Paid");
         } else if (Objects.equals(booking.isAccepted(), true)) {
