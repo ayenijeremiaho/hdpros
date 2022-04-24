@@ -235,11 +235,11 @@ public class BookingServiceImpl implements BookingService {
                 throw new GeneralException("User not allow to update this status");
             }
         } else if (Objects.equals(statusParam, "processing_payment")) {
-            if (booking.isAccepted() && booking.isPaid() && booking.isIn_progress() && booking.isJobStatus()) {
+            if (booking.isAccepted() && booking.isPaid() && booking.isIn_progress() && booking.isJobStatus() && Objects.equals(user, null)) {
                 booking.setProcessing_payment(true);
             }
         } else if (Objects.equals(statusParam, "completed")) {
-            if (booking.isAccepted() && booking.isPaid() && booking.isIn_progress() && booking.isJobStatus() && booking.isProcessing_payment()) {
+            if (booking.isAccepted() && booking.isPaid() && booking.isIn_progress() && booking.isJobStatus() && booking.isProcessing_payment() && Objects.equals(user, null)) {
                 booking.setCompleted(true);
             }
         } else {
