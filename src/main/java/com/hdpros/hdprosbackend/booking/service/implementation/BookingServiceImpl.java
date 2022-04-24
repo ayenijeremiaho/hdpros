@@ -201,14 +201,18 @@ public class BookingServiceImpl implements BookingService {
         Long bookingProviderId = null;
         Long providerId = null;
 
+        //get booking for different users category
         if (!generalService.isProvider(email)) {
             booking = getBooking(user, bookingId);
+        } else if (Objects.equals(user, null)) {
+            booking = getBookingForProvider(bookingId);
         } else {
             booking = getBookingForProvider(bookingId);
             bookingProviderId = booking.getProviderId();
             providerId = user.getId();
         }
 
+        //update job status base on work flow
         if (Objects.equals(statusParam, "accepted")) {
             if (!generalService.isProvider(email) && !booking.isJobStatus()) {
                 throw new GeneralException("User not allow to update this status");
