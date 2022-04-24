@@ -51,7 +51,7 @@ public class Booking extends BaseEntity {
     @ManyToOne(optional = false)
     private User user;
 
-    private Long provider_id;
+    private Long providerId;
 
     private boolean delFlag = false;
 

@@ -205,7 +205,7 @@ public class BookingServiceImpl implements BookingService {
             booking = getBooking(user, bookingId);
         } else {
             booking = getBookingForProvider(bookingId);
-            bookingProviderId = booking.getProvider_id();
+            bookingProviderId = booking.getProviderId();
             providerId = user.getId();
         }
 
@@ -214,7 +214,7 @@ public class BookingServiceImpl implements BookingService {
                 throw new GeneralException("User not allow to update this status");
             } else {
                 booking.setAccepted(true);
-                booking.setProvider_id(user.getId());
+                booking.setProviderId(user.getId());
             }
         } else if (Objects.equals(statusParam, "paid")) {
             if (!generalService.isProvider(email) && booking.isAccepted()) {
@@ -317,11 +317,11 @@ public class BookingServiceImpl implements BookingService {
         if (Objects.equals(statusParam, "pending")) {
             booking = bookingRepository.findByJobStatusAndPaidAndAcceptedAndDelFlag(false, false, false, false);
         } else if (Objects.equals(statusParam, "done")) {
-            booking = bookingRepository.findByJobStatusAndPaidAndAcceptedAndDelFlag(true, true, true, false);
+            booking = bookingRepository.findByJobStatusAndPaidAndAcceptedAndDelFlagAndProviderId(true, true, true, false, user.getId());
         } else if (Objects.equals(statusParam, "paid")) {
-            booking = bookingRepository.findByJobStatusAndPaidAndAcceptedAndDelFlag(false, true, true, false);
+            booking = bookingRepository.findByJobStatusAndPaidAndAcceptedAndDelFlagAndProviderId(false, true, true, false, user.getId());
         } else if (Objects.equals(statusParam, "accepted")) {
-            booking = bookingRepository.findByJobStatusAndPaidAndAcceptedAndDelFlag(false, false, true, false);
+            booking = bookingRepository.findByJobStatusAndPaidAndAcceptedAndDelFlagAndProviderId(false, false, true, false, user.getId());
         } else {
             booking = Collections.emptyList();
         }
