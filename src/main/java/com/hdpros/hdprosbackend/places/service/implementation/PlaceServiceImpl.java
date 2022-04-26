@@ -21,11 +21,10 @@ import java.util.stream.Collectors;
 @Service
 public class PlaceServiceImpl implements PlaceService {
 
-    @Value("${record.count}")
-    private int count;
-
     private final GeneralService generalService;
     private final PlaceRepository placeRepository;
+    @Value("${record.count}")
+    private int count;
 
     public PlaceServiceImpl(GeneralService generalService, PlaceRepository placeRepository) {
         this.generalService = generalService;
@@ -115,6 +114,10 @@ public class PlaceServiceImpl implements PlaceService {
 
         PlaceDTO placeDTO = new PlaceDTO();
         BeanUtils.copyProperties(place, placeDTO);
+
+        //set email
+        placeDTO.setEmail(place.getUser().getEmail());
+        System.out.println("here: " + place.getUser().getEmail());
         return placeDTO;
     }
 }

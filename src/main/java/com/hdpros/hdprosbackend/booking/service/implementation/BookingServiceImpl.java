@@ -370,6 +370,8 @@ public class BookingServiceImpl implements BookingService {
 
         PlaceDTO place = placeService.getPlaceDTO(placeService.getPlace(booking.getUser(), booking.getPlaceId()));
 
+        place.setEmail(booking.getUser().getEmail());
+
         bookingDTOResponse.setRooms(roomsDtoResponses);
         bookingDTOResponse.setEmail(booking.getUser().getEmail());
         bookingDTOResponse.setPlace(place);
@@ -408,6 +410,8 @@ public class BookingServiceImpl implements BookingService {
         sum = sum * 0.9;
 
         PlaceDTO place = placeService.getPlaceDTO(placeService.getPlace(booking.getUser(), booking.getPlaceId()));
+
+        place.setEmail(booking.getUser().getEmail());
 
         bookingDTOResponse.setRooms(roomsDtoResponses);
         bookingDTOResponse.setEmail(booking.getUser().getEmail());
