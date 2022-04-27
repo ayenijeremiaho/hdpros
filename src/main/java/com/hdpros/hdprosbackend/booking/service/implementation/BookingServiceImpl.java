@@ -204,7 +204,7 @@ public class BookingServiceImpl implements BookingService {
         //get booking for different users category
         if (!generalService.isProvider(email)) {
             booking = getBooking(user, bookingId);
-        } else if (Objects.equals(user, null)) {
+        } else if (!Objects.nonNull(user)) {
             booking = getBookingForProvider(bookingId);
         } else {
             booking = getBookingForProvider(bookingId);
@@ -227,7 +227,7 @@ public class BookingServiceImpl implements BookingService {
                 throw new GeneralException("User not allow to update this status");
             }
         } else if (Objects.equals(statusParam, "in_progress")) {
-            if (!generalService.isProvider(email) && !booking.isAccepted() && !booking.isPaid() && Objects.equals(!Objects.equals(bookingProviderId, null), !Objects.equals(providerId, null))) {
+            if (!generalService.isProvider(email) && !booking.isAccepted() && !booking.isPaid() && Objects.equals(Objects.nonNull(bookingProviderId), Objects.nonNull(providerId))) {
                 throw new GeneralException("User not allow to update this status");
             } else {
                 booking.setIn_progress(true);
@@ -239,11 +239,11 @@ public class BookingServiceImpl implements BookingService {
                 throw new GeneralException("User not allow to update this status");
             }
         } else if (Objects.equals(statusParam, "processing_payment")) {
-            if (booking.isAccepted() && booking.isPaid() && booking.isIn_progress() && booking.isJobStatus() && Objects.equals(user, null)) {
+            if (booking.isAccepted() && booking.isPaid() && booking.isIn_progress() && booking.isJobStatus() && !Objects.nonNull(user)) {
                 booking.setProcessing_payment(true);
             }
         } else if (Objects.equals(statusParam, "completed")) {
-            if (booking.isAccepted() && booking.isPaid() && booking.isIn_progress() && booking.isJobStatus() && booking.isProcessing_payment() && Objects.equals(user, null)) {
+            if (booking.isAccepted() && booking.isPaid() && booking.isIn_progress() && booking.isJobStatus() && booking.isProcessing_payment() && !Objects.nonNull(user)) {
                 booking.setCompleted(true);
             }
         } else {
@@ -368,16 +368,7 @@ public class BookingServiceImpl implements BookingService {
 
         double sum = roomsDtoResponses.stream().filter(o -> o.getPrice() > 10).mapToDouble(RoomDTOResponse::getPrice).sum();
 
-        PlaceDTO place = placeService.getPlaceDTO(placeService.getPlace(booking.getUser(), booking.getPlaceId()));
-
-        place.setEmail(booking.getUser().getEmail());
-
-        bookingDTOResponse.setRooms(roomsDtoResponses);
-        bookingDTOResponse.setEmail(booking.getUser().getEmail());
-        bookingDTOResponse.setPlace(place);
-        bookingDTOResponse.setAmount(sum);
-
-        return bookingDTOResponse;
+        return getBookingDTOResponse(booking, bookingDTOResponse, roomsDtoResponses, sum);
     }
 
     private BookingDTOResponse getBookingDTOResponseForProvider(Booking booking) {
@@ -409,6 +400,10 @@ public class BookingServiceImpl implements BookingService {
 
         sum = sum * 0.9;
 
+        return getBookingDTOResponse(booking, bookingDTOResponse, roomsDtoResponses, sum);
+    }
+
+    private BookingDTOResponse getBookingDTOResponse(Booking booking, BookingDTOResponse bookingDTOResponse, List<RoomDTOResponse> roomsDtoResponses, double sum) {
         PlaceDTO place = placeService.getPlaceDTO(placeService.getPlace(booking.getUser(), booking.getPlaceId()));
 
         place.setEmail(booking.getUser().getEmail());

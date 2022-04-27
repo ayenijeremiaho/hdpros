@@ -20,6 +20,9 @@ public class ConfigProperty {
     @Value("${paystack.bank.url}")
     private String paystackBankUrl;
 
+    @Value("${paystack.verify.url}")
+    private String paystackVerifyUrl;
+
     @Value("${cloudinary.cloudName}")
     private String cloudinaryCloudName;
 

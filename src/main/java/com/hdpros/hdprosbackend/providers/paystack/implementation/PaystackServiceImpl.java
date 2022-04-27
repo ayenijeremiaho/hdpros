@@ -5,9 +5,10 @@ import com.hdpros.hdprosbackend.bank.dto.BankListResponse;
 import com.hdpros.hdprosbackend.bvn.dto.BvnCustomerRequest;
 import com.hdpros.hdprosbackend.bvn.dto.BvnValidationRequest;
 import com.hdpros.hdprosbackend.bvn.dto.BvnValidationResponse;
-import com.hdpros.hdprosbackend.general.ConfigProperty;
 import com.hdpros.hdprosbackend.exceptions.GeneralException;
+import com.hdpros.hdprosbackend.general.ConfigProperty;
 import com.hdpros.hdprosbackend.general.GeneralService;
+import com.hdpros.hdprosbackend.payment.dto.VerifyTransactionResponse;
 import com.hdpros.hdprosbackend.providers.paystack.PaystackService;
 import com.hdpros.hdprosbackend.utils.http.HttpService;
 import kong.unirest.HttpResponse;
@@ -23,6 +24,7 @@ public class PaystackServiceImpl implements PaystackService {
 
     private final String BANK = "BANK";
     private final String BVN = "BVN";
+    private final String VERIFY = "VERIFY";
 
     private final Gson gson;
     private final HttpService httpService;
@@ -74,6 +76,22 @@ public class PaystackServiceImpl implements PaystackService {
         return gson.fromJson(response, BankListResponse.class);
     }
 
+    @Override
+    public VerifyTransactionResponse verifyTransaction(String ref) {
+        Map<String, String> headers = getHeaderList();
+        String url = getUrl(VERIFY);
+
+        url = url + "/" + ref;
+
+        System.out.println(url);
+
+        HttpResponse<JsonNode> responseObject = httpService.get(headers, null, url);
+
+        String response = generalService.getResponseAsString(responseObject);
+
+        return gson.fromJson(response, VerifyTransactionResponse.class);
+    }
+
     private String getUrl(String type) {
         String mainUrl = configProperty.getPaystackUrl();
         switch (type) {
@@ -81,16 +99,18 @@ public class PaystackServiceImpl implements PaystackService {
                 return mainUrl + configProperty.getPaystackBankUrl();
             case BVN:
                 return mainUrl + configProperty.getPaystackBvnUrl();
+            case VERIFY:
+                return mainUrl + configProperty.getPaystackVerifyUrl();
         }
         throw new GeneralException("Invalid Action");
     }
 
-    private Map<String, Object> getParams(String nextPage){
+    private Map<String, Object> getParams(String nextPage) {
         Map<String, Object> params = new HashMap<>();
         params.put("country", "nigeria");
         params.put("perPage", 100);
 
-        if(Objects.nonNull(nextPage)) {
+        if (Objects.nonNull(nextPage)) {
             params.put("next", nextPage);
         }
 
