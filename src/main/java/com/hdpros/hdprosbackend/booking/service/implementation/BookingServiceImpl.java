@@ -349,6 +349,7 @@ public class BookingServiceImpl implements BookingService {
 
         if (Objects.nonNull(booking.getProviderId())) {
             User user = generalService.getUser(booking.getProviderId());
+            user.setBvnDetails(generalService.getUserBvnDetail(booking.getProviderId()));
 
             //set provider detail
             bookingDTOResponse.setProvider(user);
@@ -386,6 +387,7 @@ public class BookingServiceImpl implements BookingService {
 
         if (Objects.nonNull(booking.getProviderId())) {
             User user = generalService.getUser(booking.getProviderId());
+            user.setBvnDetails(generalService.getUserBvnDetail(booking.getProviderId()));
 
             //set provider detail
             bookingDTOResponse.setProvider(user);

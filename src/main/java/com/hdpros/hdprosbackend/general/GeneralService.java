@@ -1,5 +1,6 @@
 package com.hdpros.hdprosbackend.general;
 
+import com.hdpros.hdprosbackend.bvn.model.BvnDetails;
 import com.hdpros.hdprosbackend.user.model.User;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -30,4 +31,6 @@ public interface GeneralService {
     boolean isProvider(String email);
 
     User getUser(Long userId);
+
+    BvnDetails getUserBvnDetail(Long userId);
 }
