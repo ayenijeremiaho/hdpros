@@ -15,4 +15,6 @@ public interface UserService {
     boolean isProvider(String email);
 
     boolean changePassword(String email, String password);
+
+    User getUserById(Long userId);
 }

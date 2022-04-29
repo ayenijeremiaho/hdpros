@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hdpros.hdprosbackend.places.dto.PlaceDTO;
 import com.hdpros.hdprosbackend.places.model.Place;
 import com.hdpros.hdprosbackend.room.dto.RoomDTOResponse;
+import com.hdpros.hdprosbackend.user.model.User;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -33,4 +34,6 @@ public class BookingDTOResponse {
     private Long id;
 
     private double amount = 0.00;
+
+    private User provider;
 }

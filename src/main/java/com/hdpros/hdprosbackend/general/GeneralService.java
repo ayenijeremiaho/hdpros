@@ -28,4 +28,6 @@ public interface GeneralService {
     User getUser(String email);
 
     boolean isProvider(String email);
+
+    User getUser(Long userId);
 }

@@ -139,4 +139,10 @@ public class GeneralServiceImpl implements GeneralService {
         log.info("Checking if user is a provider => {}", email);
         return userService.isProvider(email);
     }
+
+    @Override
+    public User getUser(Long userId) {
+        log.info("Getting user details for => {}", userId);
+        return Optional.of(userService.getUserById(userId)).orElseThrow(() -> new GeneralException("Invalid username/email"));
+    }
 }

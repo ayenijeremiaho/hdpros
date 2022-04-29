@@ -83,4 +83,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByEmailAndServiceProvider(email, true);
     }
 
+    @Override
+    public User getUserById(Long userId) {
+        return Optional.of(userRepository.findByIdAndDelFlag(userId, false))
+                .orElseThrow(() -> new GeneralException("Invalid User"));
+    }
 }

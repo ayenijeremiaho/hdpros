@@ -347,6 +347,13 @@ public class BookingServiceImpl implements BookingService {
         BookingDTOResponse bookingDTOResponse = new BookingDTOResponse();
         BeanUtils.copyProperties(booking, bookingDTOResponse);
 
+        if (Objects.nonNull(booking.getProviderId())) {
+            User user = generalService.getUser(booking.getProviderId());
+
+            //set provider detail
+            bookingDTOResponse.setProvider(user);
+        }
+
         if (Objects.equals(booking.isCompleted(), true) && Objects.equals(booking.isProcessing_payment(), true) && Objects.equals(booking.isJobStatus(), true) && Objects.equals(booking.isIn_progress(), true) && Objects.equals(booking.isAccepted(), true) && Objects.equals(booking.isPaid(), true)) {
             bookingDTOResponse.setJobStatus("Completed");
         } else if (Objects.equals(booking.isProcessing_payment(), true) && Objects.equals(booking.isJobStatus(), true) && Objects.equals(booking.isIn_progress(), true) && Objects.equals(booking.isAccepted(), true) && Objects.equals(booking.isPaid(), true)) {
@@ -376,6 +383,13 @@ public class BookingServiceImpl implements BookingService {
 
         BookingDTOResponse bookingDTOResponse = new BookingDTOResponse();
         BeanUtils.copyProperties(booking, bookingDTOResponse);
+
+        if (Objects.nonNull(booking.getProviderId())) {
+            User user = generalService.getUser(booking.getProviderId());
+
+            //set provider detail
+            bookingDTOResponse.setProvider(user);
+        }
 
         if (Objects.equals(booking.isCompleted(), true) && Objects.equals(booking.isProcessing_payment(), true) && Objects.equals(booking.isJobStatus(), true) && Objects.equals(booking.isIn_progress(), true) && Objects.equals(booking.isAccepted(), true) && Objects.equals(booking.isPaid(), true)) {
             bookingDTOResponse.setJobStatus("Completed");
