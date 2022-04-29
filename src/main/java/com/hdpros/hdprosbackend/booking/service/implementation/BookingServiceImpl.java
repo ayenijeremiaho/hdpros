@@ -13,6 +13,7 @@ import com.hdpros.hdprosbackend.places.service.PlaceService;
 import com.hdpros.hdprosbackend.room.dto.RoomDTOResponse;
 import com.hdpros.hdprosbackend.room.model.Room;
 import com.hdpros.hdprosbackend.room.service.RoomService;
+import com.hdpros.hdprosbackend.user.dto.ProviderResponse;
 import com.hdpros.hdprosbackend.user.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -151,7 +152,7 @@ public class BookingServiceImpl implements BookingService {
 
         User user = generalService.getUser(email);
 
-        List<Booking> bookings = bookingRepository.findByUserAndDelFlag(user, false);
+        List<Booking> bookings = bookingRepository.findByUserAndDelFlagOrderByCreatedAtDesc(user, false);
 
         return bookings.stream().map(this::getBookingDTOResponse).collect(Collectors.toList());
     }
@@ -329,6 +330,8 @@ public class BookingServiceImpl implements BookingService {
             booking = bookingRepository.findByJobStatusAndPaidAndAcceptedAndDelFlagAndProviderIdOrderByCreatedAtDesc(false, true, true, false, user.getId());
         } else if (Objects.equals(statusParam, "accepted")) {
             booking = bookingRepository.findByJobStatusAndPaidAndAcceptedAndDelFlagAndProviderIdOrderByCreatedAtDesc(false, false, true, false, user.getId());
+        } else if (Objects.equals(statusParam, "my_job")) {
+            booking = bookingRepository.findByProviderIdAndDelFlagOrderByCreatedAtDesc(user.getId(), false);
         } else {
             booking = Collections.emptyList();
         }
@@ -352,10 +355,13 @@ public class BookingServiceImpl implements BookingService {
 
         if (Objects.nonNull(booking.getProviderId())) {
             User user = generalService.getUser(booking.getProviderId());
-            user.setBvnDetails(bvnService.getBvnDetailsById(booking.getProviderId()));
+
+            System.out.println(user.getBvnDetails().getId());
+            ProviderResponse response = generalService.getProviderDetail(user);
+            response.setBvnDetails(bvnService.getBvnDetailsById(user.getBvnDetails().getId()));
 
             //set provider detail
-            bookingDTOResponse.setProvider(user);
+            bookingDTOResponse.setProvider(response);
         }
 
         if (Objects.equals(booking.isCompleted(), true) && Objects.equals(booking.isProcessing_payment(), true) && Objects.equals(booking.isJobStatus(), true) && Objects.equals(booking.isIn_progress(), true) && Objects.equals(booking.isAccepted(), true) && Objects.equals(booking.isPaid(), true)) {
@@ -390,10 +396,11 @@ public class BookingServiceImpl implements BookingService {
 
         if (Objects.nonNull(booking.getProviderId())) {
             User user = generalService.getUser(booking.getProviderId());
-            user.setBvnDetails(bvnService.getBvnDetailsById(booking.getProviderId()));
+
+            ProviderResponse response = generalService.getProviderDetail(user);
 
             //set provider detail
-            bookingDTOResponse.setProvider(user);
+            bookingDTOResponse.setProvider(response);
         }
 
         if (Objects.equals(booking.isCompleted(), true) && Objects.equals(booking.isProcessing_payment(), true) && Objects.equals(booking.isJobStatus(), true) && Objects.equals(booking.isIn_progress(), true) && Objects.equals(booking.isAccepted(), true) && Objects.equals(booking.isPaid(), true)) {

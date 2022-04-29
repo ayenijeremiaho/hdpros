@@ -2,9 +2,8 @@ package com.hdpros.hdprosbackend.booking.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hdpros.hdprosbackend.places.dto.PlaceDTO;
-import com.hdpros.hdprosbackend.places.model.Place;
 import com.hdpros.hdprosbackend.room.dto.RoomDTOResponse;
-import com.hdpros.hdprosbackend.user.model.User;
+import com.hdpros.hdprosbackend.user.dto.ProviderResponse;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -18,7 +17,7 @@ public class BookingDTOResponse {
 
     private LocalDate startDate;
 
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "HH:mm:ss[.SSS][.SS][.S]")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss[.SSS][.SS][.S]")
     private LocalTime startTime;
 
     private String description;
@@ -35,5 +34,5 @@ public class BookingDTOResponse {
 
     private double amount = 0.00;
 
-    private User provider;
+    private ProviderResponse provider;
 }

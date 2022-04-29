@@ -12,7 +12,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     int countAllByUserAndDelFlag(User user, boolean delFlag);
 
-    List<Booking> findByUserAndDelFlag(User user, boolean delFlag);
+    List<Booking> findByUserAndDelFlagOrderByCreatedAtDesc(User user, boolean delFlag);
 
     Booking findByUserAndIdAndDelFlag(User user, Long id, boolean delFlag);
 
@@ -23,4 +23,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByJobStatusAndPaidAndAcceptedAndDelFlagOrderByCreatedAtDesc(boolean jobStatus, boolean paid, boolean accepted, boolean delFlag);
 
     List<Booking> findByJobStatusAndPaidAndAcceptedAndDelFlagAndProviderIdOrderByCreatedAtDesc(boolean jobStatus, boolean paid, boolean accepted, boolean delFlag, Long providerId);
+
+    List<Booking> findByProviderIdAndDelFlagOrderByCreatedAtDesc(Long providerId, boolean delFlag);
 }

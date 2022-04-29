@@ -6,6 +6,7 @@ import com.hdpros.hdprosbackend.exceptions.RemoteServiceException;
 import com.hdpros.hdprosbackend.general.GeneralService;
 import com.hdpros.hdprosbackend.general.Response;
 import com.hdpros.hdprosbackend.general.ResponseConstants;
+import com.hdpros.hdprosbackend.user.dto.ProviderResponse;
 import com.hdpros.hdprosbackend.user.model.User;
 import com.hdpros.hdprosbackend.user.service.UserService;
 import kong.unirest.HttpResponse;
@@ -144,6 +145,12 @@ public class GeneralServiceImpl implements GeneralService {
     public User getUser(Long userId) {
         log.info("Getting user details for => {}", userId);
         return Optional.of(userService.getUserById(userId)).orElseThrow(() -> new GeneralException("Invalid username/email"));
+    }
+
+    @Override
+    public ProviderResponse getProviderDetail(User user) {
+        log.info("Getting provider details for => {}", user.getEmail());
+        return Optional.of(userService.getProviderDTOResponse(user)).orElseThrow(() -> new GeneralException("Invalid username/email"));
     }
 
 }

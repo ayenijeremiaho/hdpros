@@ -1,5 +1,6 @@
 package com.hdpros.hdprosbackend.user.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hdpros.hdprosbackend.bvn.model.BvnDetails;
 import com.hdpros.hdprosbackend.image.model.Image;
 import lombok.Data;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Data
 @Entity(name = "users")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
 
     @Id
@@ -40,7 +42,7 @@ public class User {
     @Column(name = "changePassword", columnDefinition = "boolean default false")
     private boolean changePassword;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne//(fetch = FetchType.LAZY)
     private BvnDetails bvnDetails;
 
     @OneToMany(fetch = FetchType.LAZY)

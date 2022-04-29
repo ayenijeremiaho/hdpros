@@ -2,11 +2,13 @@ package com.hdpros.hdprosbackend.user.service.implementation;
 
 import com.hdpros.hdprosbackend.exceptions.GeneralException;
 import com.hdpros.hdprosbackend.user.Repository.UserRepository;
+import com.hdpros.hdprosbackend.user.dto.ProviderResponse;
 import com.hdpros.hdprosbackend.user.dto.RegisterUserRequest;
 import com.hdpros.hdprosbackend.user.dto.UpdatePasswordRequest;
 import com.hdpros.hdprosbackend.user.model.User;
 import com.hdpros.hdprosbackend.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -87,5 +89,15 @@ public class UserServiceImpl implements UserService {
     public User getUserById(Long userId) {
         return Optional.of(userRepository.findByIdAndDelFlag(userId, false))
                 .orElseThrow(() -> new GeneralException("Invalid User"));
+    }
+
+    @Override
+    public ProviderResponse getProviderDTOResponse(User user){
+        log.info("Converting User to Provider DTO Response for provider");
+
+        ProviderResponse providerResponse = new ProviderResponse();
+        BeanUtils.copyProperties(user, providerResponse);
+
+        return providerResponse;
     }
 }
