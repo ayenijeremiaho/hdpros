@@ -5,6 +5,7 @@ import com.hdpros.hdprosbackend.booking.dto.BookingDTOResponse;
 import com.hdpros.hdprosbackend.booking.model.Booking;
 import com.hdpros.hdprosbackend.booking.repository.BookingRepository;
 import com.hdpros.hdprosbackend.booking.service.BookingService;
+import com.hdpros.hdprosbackend.bvn.service.BvnService;
 import com.hdpros.hdprosbackend.exceptions.GeneralException;
 import com.hdpros.hdprosbackend.general.GeneralService;
 import com.hdpros.hdprosbackend.places.dto.PlaceDTO;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 @Service
 public class BookingServiceImpl implements BookingService {
 
+    private final BvnService bvnService;
     private final RoomService roomService;
     private final PlaceService placeService;
     private final GeneralService generalService;
@@ -35,7 +37,8 @@ public class BookingServiceImpl implements BookingService {
     @Value("${record.count}")
     private int count;
 
-    public BookingServiceImpl(RoomService roomService, PlaceService placeService, GeneralService generalService, BookingRepository bookingRepository) {
+    public BookingServiceImpl(BvnService bvnService, RoomService roomService, PlaceService placeService, GeneralService generalService, BookingRepository bookingRepository) {
+        this.bvnService = bvnService;
         this.roomService = roomService;
         this.placeService = placeService;
         this.generalService = generalService;
@@ -349,7 +352,7 @@ public class BookingServiceImpl implements BookingService {
 
         if (Objects.nonNull(booking.getProviderId())) {
             User user = generalService.getUser(booking.getProviderId());
-            user.setBvnDetails(generalService.getUserBvnDetail(booking.getProviderId()));
+            user.setBvnDetails(bvnService.getBvnDetailsById(booking.getProviderId()));
 
             //set provider detail
             bookingDTOResponse.setProvider(user);
@@ -387,7 +390,7 @@ public class BookingServiceImpl implements BookingService {
 
         if (Objects.nonNull(booking.getProviderId())) {
             User user = generalService.getUser(booking.getProviderId());
-            user.setBvnDetails(generalService.getUserBvnDetail(booking.getProviderId()));
+            user.setBvnDetails(bvnService.getBvnDetailsById(booking.getProviderId()));
 
             //set provider detail
             bookingDTOResponse.setProvider(user);

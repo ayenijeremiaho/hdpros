@@ -1,8 +1,6 @@
 package com.hdpros.hdprosbackend.general.implementation;
 
 import com.google.gson.Gson;
-import com.hdpros.hdprosbackend.bvn.model.BvnDetails;
-import com.hdpros.hdprosbackend.bvn.service.BvnService;
 import com.hdpros.hdprosbackend.exceptions.GeneralException;
 import com.hdpros.hdprosbackend.exceptions.RemoteServiceException;
 import com.hdpros.hdprosbackend.general.GeneralService;
@@ -27,12 +25,10 @@ public class GeneralServiceImpl implements GeneralService {
 
     private final Gson gson;
     private final UserService userService;
-    private final BvnService bvnService;
 
-    public GeneralServiceImpl(Gson gson, UserService userService, BvnService bvnService) {
+    public GeneralServiceImpl(Gson gson, UserService userService) {
         this.gson = gson;
         this.userService = userService;
-        this.bvnService = bvnService;
     }
 
     //Used to format object into a string
@@ -150,9 +146,4 @@ public class GeneralServiceImpl implements GeneralService {
         return Optional.of(userService.getUserById(userId)).orElseThrow(() -> new GeneralException("Invalid username/email"));
     }
 
-    @Override
-    public BvnDetails getUserBvnDetail(Long userId) {
-        log.info("Getting user details for => {}", userId);
-        return Optional.of(bvnService.getBvnDetailsById(userId)).orElseThrow(() -> new GeneralException("Invalid username/email"));
-    }
 }
