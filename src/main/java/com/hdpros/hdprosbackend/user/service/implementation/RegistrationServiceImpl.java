@@ -47,7 +47,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public MultipartFile convertToMultipart(String base64) {
         if (GeneralUtil.stringIsNullOrEmpty(base64)) {
-            return null;
+            throw new GeneralException("Image cannot be empty");
         }
 
         MultipartFile file = GeneralUtil.base64ToMultipart(base64);
@@ -63,6 +63,14 @@ public class RegistrationServiceImpl implements RegistrationService {
         //verify if email already exist
         if (userService.userExistByEmail(request.getEmail())) {
             throw new GeneralException("Email already exist, Login or reset password");
+        }
+
+        //upload image to cloudinary
+        Map<String, String> imageMap = cloudinaryService.upload(request.getFile());
+
+        //verify image was uploaded successfully
+        if (Objects.isNull(imageMap)) {
+            throw new GeneralException("Error uploading profile image");
         }
 
         //create user object and map registration request to user object
@@ -87,20 +95,12 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         user = userService.saveUser(user);
 
-        //verify image was uploaded and upload image
-        if (Objects.nonNull(request.getFile())) {
-            Map<String, String> imageMap = cloudinaryService.upload(request.getFile());
 
-            if (Objects.nonNull(imageMap)) {
-                String publicId = imageMap.get("publicId");
-                String imageUrl = imageMap.get("url");
+        //save profile image
+        Image image = imageService.saveProfileImage(imageMap.get("publicId"), imageMap.get("url"), user);
+        user.setImages(image);
+        userService.saveUser(user);
 
-                //save profile image
-                Image image = imageService.saveProfileImage(publicId, imageUrl, user);
-                user.setImages(image);
-                userService.saveUser(user);
-            }
-        }
 
         Map<String, Object> map = new HashMap<>();
         map.put("userName", user.getEmail());
@@ -116,8 +116,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         //send mail to user
         String[] copy = mailingList.toArray(new String[0]);
 
-        mailService.sendMail("New User Registration",
-                user.getEmail(), copy, map, "new_user");
+        mailService.sendMail("New User Registration", user.getEmail(), copy, map, "new_user");
 
         return RegisterUserResponse.builder().status("SUCCESSFUL").build();
     }
