@@ -59,10 +59,10 @@ public class BvnServiceImpl implements BvnService {
         bvnDetails.setAccountNumber(request.getBankAccountNumber());
         bvnDetails.setBankCode(request.getBankCode());
         bvnDetails.setStatus(VERIFICATION_FAILED);
+        bvnDetails.setFirstName(request.getFirstName());
+        bvnDetails.setLastName(request.getLastName());
 
         if (isVerified) {
-            bvnDetails.setFirstName(request.getFirstName());
-            bvnDetails.setLastName(request.getLastName());
             bvnDetails.setMiddleName(request.getMiddleName());
             bvnDetails.setBlacklisted(bvnData.isBlacklisted());
             bvnDetails.setStatus(VERIFICATION_SUCCESSFUL);
