@@ -1,10 +1,13 @@
 package com.hdpros.hdprosbackend.payment.service;
 
-import com.hdpros.hdprosbackend.payment.dto.VerifyTransactionRequest;
-import com.hdpros.hdprosbackend.payment.dto.VerifyTransactionResponse;
+import com.hdpros.hdprosbackend.payment.dto.*;
 
 public interface PaymentService {
 
     VerifyTransactionResponse verifyTrans(VerifyTransactionRequest verifyTransactionRequest);
+
+    TransferRecipientResponse createTransferRecipient(TransferRecipientRequest recipientRequest);
+
+    TransferResponse transferFund(TransferRequest transferRequest);
 
 }

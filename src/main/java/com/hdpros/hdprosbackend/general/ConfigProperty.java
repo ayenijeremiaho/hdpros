@@ -23,6 +23,18 @@ public class ConfigProperty {
     @Value("${paystack.verify.url}")
     private String paystackVerifyUrl;
 
+    @Value("${paystack.recipient.url}")
+    private String paystackRecipientUrl;
+
+    @Value("${paystack.transfer.url}")
+    private String paystackTransferUrl;
+
+    @Value("${paystack.finalize.url}")
+    private String paystackFinalizeTransferUrl;
+
+    @Value("${paystack.verifyTransfer.url}")
+    private String paystackVerifyTransferUrl;
+
     @Value("${cloudinary.cloudName}")
     private String cloudinaryCloudName;
 

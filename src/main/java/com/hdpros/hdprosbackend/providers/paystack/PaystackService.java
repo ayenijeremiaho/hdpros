@@ -4,7 +4,7 @@ import com.hdpros.hdprosbackend.bank.dto.BankListResponse;
 import com.hdpros.hdprosbackend.bvn.dto.BvnCustomerRequest;
 import com.hdpros.hdprosbackend.bvn.dto.BvnValidationRequest;
 import com.hdpros.hdprosbackend.bvn.dto.BvnValidationResponse;
-import com.hdpros.hdprosbackend.payment.dto.VerifyTransactionResponse;
+import com.hdpros.hdprosbackend.payment.dto.*;
 
 public interface PaystackService {
 
@@ -16,4 +16,7 @@ public interface PaystackService {
 
     VerifyTransactionResponse verifyTransaction(String ref);
 
+    TransferRecipientResponse createTransferRecipient(TransferRecipientRequest recipientRequest);
+
+    TransferResponse transferFund(TransferRequest transferRequest);
 }

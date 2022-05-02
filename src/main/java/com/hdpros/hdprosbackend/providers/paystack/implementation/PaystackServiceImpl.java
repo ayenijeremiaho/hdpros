@@ -8,7 +8,7 @@ import com.hdpros.hdprosbackend.bvn.dto.BvnValidationResponse;
 import com.hdpros.hdprosbackend.exceptions.GeneralException;
 import com.hdpros.hdprosbackend.general.ConfigProperty;
 import com.hdpros.hdprosbackend.general.GeneralService;
-import com.hdpros.hdprosbackend.payment.dto.VerifyTransactionResponse;
+import com.hdpros.hdprosbackend.payment.dto.*;
 import com.hdpros.hdprosbackend.providers.paystack.PaystackService;
 import com.hdpros.hdprosbackend.utils.http.HttpService;
 import kong.unirest.HttpResponse;
@@ -25,6 +25,10 @@ public class PaystackServiceImpl implements PaystackService {
     private final String BANK = "BANK";
     private final String BVN = "BVN";
     private final String VERIFY = "VERIFY";
+    private final String RECIPIENT = "RECIPIENT";
+    private final String TRANSFER = "TRANSFER";
+    private final String FINALIZE_TRANSFER = "FINALIZE_TRANSFER";
+    private final String VERIFY_TRANSFER = "VERIFY_TRANSFER";
 
     private final Gson gson;
     private final HttpService httpService;
@@ -92,6 +96,32 @@ public class PaystackServiceImpl implements PaystackService {
         return gson.fromJson(response, VerifyTransactionResponse.class);
     }
 
+    @Override
+    public TransferRecipientResponse createTransferRecipient(TransferRecipientRequest recipientRequest) {
+        Map<String, String> headers = getHeaderListForm();
+        String requestBody = generalService.getAsString(recipientRequest);
+        String url = getUrl(RECIPIENT);
+
+        HttpResponse<JsonNode> responseObject = httpService.post(headers, requestBody, url);
+
+        String response = generalService.getResponseAsString(responseObject);
+
+        return gson.fromJson(response, TransferRecipientResponse.class);
+    }
+
+    @Override
+    public TransferResponse transferFund(TransferRequest transferRequest) {
+        Map<String, String> headers = getHeaderListForm();
+        String requestBody = generalService.getAsString(transferRequest);
+        String url = getUrl(RECIPIENT);
+
+        HttpResponse<JsonNode> responseObject = httpService.post(headers, requestBody, url);
+
+        String response = generalService.getResponseAsString(responseObject);
+
+        return gson.fromJson(response, TransferResponse.class);
+    }
+
     private String getUrl(String type) {
         String mainUrl = configProperty.getPaystackUrl();
         switch (type) {
@@ -101,6 +131,14 @@ public class PaystackServiceImpl implements PaystackService {
                 return mainUrl + configProperty.getPaystackBvnUrl();
             case VERIFY:
                 return mainUrl + configProperty.getPaystackVerifyUrl();
+            case RECIPIENT:
+                return mainUrl + configProperty.getPaystackRecipientUrl();
+            case TRANSFER:
+                return mainUrl + configProperty.getPaystackTransferUrl();
+            case FINALIZE_TRANSFER:
+                return mainUrl + configProperty.getPaystackFinalizeTransferUrl();
+            case VERIFY_TRANSFER:
+                return mainUrl + configProperty.getPaystackVerifyTransferUrl();
         }
         throw new GeneralException("Invalid Action");
     }
@@ -120,6 +158,13 @@ public class PaystackServiceImpl implements PaystackService {
     private Map<String, String> getHeaderList() {
         Map<String, String> header = new HashMap<>();
         header.put("Content-Type", "application/json");
+        header.put("Authorization", "Bearer " + configProperty.getPaystackSecret());
+        return header;
+    }
+
+    private Map<String, String> getHeaderListForm() {
+        Map<String, String> header = new HashMap<>();
+        header.put("Content-Type", "application/x-www-form-urlencoded");
         header.put("Authorization", "Bearer " + configProperty.getPaystackSecret());
         return header;
     }
