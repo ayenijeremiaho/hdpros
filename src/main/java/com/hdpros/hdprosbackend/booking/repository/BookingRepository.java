@@ -10,6 +10,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     boolean existsByDescriptionAndUserAndDelFlag(String description, User user, boolean delFlag);
 
+    boolean existsByPaymentReference(String paymentReference);
+
+    boolean existsByTransferReference(String transferReference);
+
     int countAllByUserAndDelFlag(User user, boolean delFlag);
 
     List<Booking> findByUserAndDelFlagOrderByCreatedAtDesc(User user, boolean delFlag);

@@ -8,6 +8,7 @@ import com.hdpros.hdprosbackend.booking.service.BookingService;
 import com.hdpros.hdprosbackend.bvn.service.BvnService;
 import com.hdpros.hdprosbackend.exceptions.GeneralException;
 import com.hdpros.hdprosbackend.general.GeneralService;
+import com.hdpros.hdprosbackend.payment.dto.VerifyTransactionResponse;
 import com.hdpros.hdprosbackend.places.dto.PlaceDTO;
 import com.hdpros.hdprosbackend.places.service.PlaceService;
 import com.hdpros.hdprosbackend.room.dto.RoomDTOResponse;
@@ -208,7 +209,7 @@ public class BookingServiceImpl implements BookingService {
         //get booking for different users category
         if (!generalService.isProvider(email)) {
             booking = getBooking(user, bookingId);
-        } else if (!Objects.nonNull(user)) {
+        } else if (Objects.isNull(user)) {
             booking = getBookingForProvider(bookingId);
         } else {
             booking = getBookingForProvider(bookingId);
@@ -225,7 +226,7 @@ public class BookingServiceImpl implements BookingService {
                 booking.setProviderId(user.getId());
             }
         } else if (Objects.equals(statusParam, "paid")) {
-            if (!generalService.isProvider(email) && booking.isAccepted()) {
+            if (!generalService.isProvider(email) && booking.isAccepted() && Objects.nonNull(user)) {
                 booking.setPaid(true);
             } else {
                 throw new GeneralException("User not allow to update this status");
@@ -274,6 +275,66 @@ public class BookingServiceImpl implements BookingService {
         response.setEmail(email);
 
         return response;
+    }
+
+    @Override
+    public BookingDTO getSingleBooking(Long bookingId) {
+        log.info("Getting Single booking");
+
+        BookingDTO dto;
+
+        Booking booking = bookingRepository.findByIdAndDelFlag(bookingId, false);
+
+        if (Objects.isNull(booking)) {
+            throw new GeneralException("Invalid Request");
+        }
+
+        dto = getBookingDTO(booking);
+
+        return dto;
+    }
+
+    @Override
+    public boolean verifyPayment(VerifyTransactionResponse verifyTransactionResponse, BookingDTO dto) {
+        log.info("Updating booking payment info!!!");
+
+        Booking booking = bookingRepository.findByIdAndDelFlag(dto.getId(), false);
+
+        if (Objects.equals(verifyTransactionResponse.getVerifyData().getStatus(), "success")) {
+
+            if (!verifyPaymentRef(verifyTransactionResponse.getVerifyData().getReference())) {
+                booking.setPaymentReference(verifyTransactionResponse.getVerifyData().getReference());
+                booking.setPaymentDate(LocalDateTime.now());
+            } else {
+                throw new GeneralException("Payment reference already exist for another booking");
+            }
+        } else {
+            throw new GeneralException("Invalid Request");
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean verifyPaymentRef(String ref) {
+        log.info("Check payment reference");
+
+        if (bookingRepository.existsByPaymentReference(ref)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean verifyTransferRef(String ref) {
+        log.info("Check transfer reference");
+
+        if (bookingRepository.existsByTransferReference(ref)) {
+            return true;
+        }
+
+        return false;
     }
 
     private Booking getBooking(User user, Long bookingId) {

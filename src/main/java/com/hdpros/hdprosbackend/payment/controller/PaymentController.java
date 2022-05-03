@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/v1/payment")
@@ -23,9 +26,12 @@ public class PaymentController {
     }
 
     @PostMapping("/verify")
-    private Response verifyTransaction(@RequestBody VerifyTransactionRequest request) {
+    private Response verifyTransaction(@ApiIgnore Principal principal, @RequestBody VerifyTransactionRequest request) {
 
-        VerifyTransactionResponse data = paymentService.verifyTrans(request);
+        //update the email of the user to that of the logged-in user
+        String mail = principal.getName();
+
+        VerifyTransactionResponse data = paymentService.verifyTrans(mail, request);
 
         return generalService.prepareSuccessResponse(data);
     }

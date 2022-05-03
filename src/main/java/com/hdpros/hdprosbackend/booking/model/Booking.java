@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
@@ -54,6 +55,16 @@ public class Booking extends BaseEntity {
     private Long providerId;
 
     private boolean delFlag = false;
+
+    @Column(unique = true, nullable = true)
+    private String paymentReference;
+
+    private LocalDateTime paymentDate;
+
+    @Column(unique = true, nullable = true)
+    private String transferReference;
+
+    private LocalDateTime transferDate;
 
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Room> rooms;

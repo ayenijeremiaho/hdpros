@@ -28,4 +28,6 @@ public class BookingDTO {
     private String email;
 
     private Long id;
+
+    private String paymentReference;
 }

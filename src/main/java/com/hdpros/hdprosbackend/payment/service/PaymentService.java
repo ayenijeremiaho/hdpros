@@ -4,7 +4,7 @@ import com.hdpros.hdprosbackend.payment.dto.*;
 
 public interface PaymentService {
 
-    VerifyTransactionResponse verifyTrans(VerifyTransactionRequest verifyTransactionRequest);
+    VerifyTransactionResponse verifyTrans(String userEmail, VerifyTransactionRequest verifyTransactionRequest);
 
     TransferRecipientResponse createTransferRecipient(TransferRecipientRequest recipientRequest);
 
