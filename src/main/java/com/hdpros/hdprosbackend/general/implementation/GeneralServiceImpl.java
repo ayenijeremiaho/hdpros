@@ -153,4 +153,24 @@ public class GeneralServiceImpl implements GeneralService {
         return Optional.of(userService.getProviderDTOResponse(user)).orElseThrow(() -> new GeneralException("Invalid username/email"));
     }
 
+    private void exportSettlement(List<GatewayCashOutView> settlementDtos, TMSUser tmsUser) {
+        ToExcel toExcel;
+        toExcel = new ToExcel(GatewayCashOutView.class);
+        String filePath = toExcel.getFileName(tmsUser.getUsername());
+        try {
+            //create file directory
+            exportUtil.createDirectory("exports");
+            String excelPath = toExcel.writeExcel(settlementDtos, "Transfer_Report", "exports/" + filePath);
+            //send mail
+            if (!excelPath.equals("failed")) {
+                logger.info("sending mail");
+                exportUtil.sendMail(tmsUser, excelPath, "Transfer Transaction Report", "Transfer Transaction");
+            } else {
+                logger.info("excel creation failed");
+            }
+        } catch (Exception e) {
+            logger.info("Error while creating Excel {}", e.getMessage());
+        }
+    }
+
 }
