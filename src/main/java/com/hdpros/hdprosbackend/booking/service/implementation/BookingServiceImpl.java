@@ -461,6 +461,11 @@ public class BookingServiceImpl implements BookingService {
         BookingDTOResponse bookingDTOResponse = new BookingDTOResponse();
         BeanUtils.copyProperties(booking, bookingDTOResponse);
 
+        //get and set user details to DTO
+        UserResponse userResponse = generalService.getUserResponse(booking.getUser());
+
+        bookingDTOResponse.setUser(userResponse);
+
         if (Objects.nonNull(booking.getProviderId())) {
             User user = generalService.getUser(booking.getProviderId());
 
