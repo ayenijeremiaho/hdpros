@@ -1,12 +1,16 @@
 package com.hdpros.hdprosbackend.utils;
 
 import com.google.gson.Gson;
+import com.hdpros.hdprosbackend.exceptions.GeneralException;
+import kong.unirest.json.JSONObject;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
 
-import java.io.FileOutputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -67,12 +71,38 @@ public class ToExcel {
     protected String createExcelFile(String excelFilePath) {
         try (FileOutputStream outputStream = new FileOutputStream(excelFilePath)) {
             workbook.write(outputStream);
-            return excelFilePath;
+            return createCSVFile(excelFilePath);
         } catch (Exception e) {
-            throw new TmsExceptions("Error Creating file {} " + e.getMessage());
+            throw new GeneralException("Error Creating file {} " + e.getMessage());
         }
     }
 
+    protected String createCSVFile(String excelFilePath) {
+        XSSFWorkbook input = null;
+        String csvFileName = null;
+
+        try {
+            input = new XSSFWorkbook(new File(excelFilePath));
+
+            csvFileName = excelFilePath.replace(".xlsx", ".csv");
+            CSVPrinter output = new CSVPrinter(new FileWriter(csvFileName), CSVFormat.DEFAULT);
+
+            String tsv = new XSSFExcelExtractor(input).getText();
+            BufferedReader reader = new BufferedReader(new StringReader(tsv));
+            reader.lines().map(line -> line.split("\t")).forEach(strings -> {
+                try {
+                    output.printRecord(strings);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        } catch (IOException | InvalidFormatException e) {
+            e.printStackTrace();
+            throw new GeneralException("Error Creating CSV file {} " + e.getMessage());
+        }
+
+        return csvFileName;
+    }
 
     /**
      * Generate the necessary excel variables
@@ -144,7 +174,7 @@ public class ToExcel {
         setUpHeaderCells(sheet, cellStyle, rowNumber);
     }
 
-    @NotNull
+
     protected CellStyle getHeaderCellStyle(Sheet sheet) {
         CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
         Font font = sheet.getWorkbook().createFont();

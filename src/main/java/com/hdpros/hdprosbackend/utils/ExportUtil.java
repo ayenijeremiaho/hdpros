@@ -3,16 +3,21 @@ package com.hdpros.hdprosbackend.utils;
 import com.hdpros.hdprosbackend.email.service.MailService;
 import com.hdpros.hdprosbackend.user.model.User;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Service
 public class ExportUtil {
 
     private final MailService mailService;
 
     @Value("${mail.paymentAdmin}")
     private String adminMail;
+
+    @Value("${mailing-list}")
+    private String mailList;
 
     @Value("${institution.showAdditional.transaction.column}")
     private String showTransactionAdditionalColumn;
@@ -29,45 +34,14 @@ public class ExportUtil {
         fileManagement.createDirectory();
     }
 
-    public void sendMail(User user, String fileName, String mailSubject, String reportDetails) {
-        Map<String, Object> params = new HashMap<>();
-        String firstname = user.getFirstName();
+    public void sendEODMail(String institutionName, String fileName, String mailSubject, String reportDetails) {
+        String[] copy = mailList.split(",");
 
-        params.put("firstName", firstname);
-        params.put("username", user.getEmail());
-        params.put("reportName", reportDetails);
-        mailService.sendMailAttachments(mailSubject, user.getEmail(), null, params, "tran_report_template", fileName);
-    }
-
-    public void sendEODMail(String email, String institutionName, String fileName, String mailSubject, String reportDetails) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("reportName", reportDetails);
         params.put("institutionName", institutionName);
-        mailService.sendMailWithAttachment(mailSubject, email, null, params, "wallet_report_eod_template", null, fileName);
-    }
-
-    public void sendInstitutionSettlementMail(Institution institution, String fileName, Map<String, Object> params) {
-        String[] copy = adminMail.split(",");
-
-        String day = (String) params.get("transactionDay");
-        mailService.sendMailWithAttachment("Settlement Report " + day, institution.getInstitutionEmail(), copy, params, "settlement_report_template", institution.getInstitutionID(), fileName);
-    }
-
-    public boolean showAdditionalColumnsForTransaction(Institution institution, String role) {
-        if (Objects.isNull(institution) && role.equals("SUPER_ADMIN")) {
-            return true;
-        } else
-            return getAsInstitutionList(showTransactionAdditionalColumn).contains(institution.getInstitutionID());
-//            return (institution.getInstitutionID().equals("FREE444942") || institution.getInstitutionID().equals("CAPR453083"));
-    }
-
-    public boolean showAdditionalColumnsForWallet(Institution institution, String role) {
-        if (Objects.isNull(institution) && role.equals("SUPER_ADMIN")) {
-            return true;
-        } else
-            return getAsInstitutionList(showWalletTransactionAdditionalColumn).contains(institution.getInstitutionID());
-//            return (institution.getInstitutionID().equals("FREE444942"));
+        mailService.sendMailAttachments(mailSubject, adminMail, copy, params, "wallet_report_eod_template", null, fileName);
     }
 
     public void deleteAllFilesInFolders(String... folderNames) {

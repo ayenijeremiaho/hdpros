@@ -6,17 +6,22 @@ import com.hdpros.hdprosbackend.exceptions.RemoteServiceException;
 import com.hdpros.hdprosbackend.general.GeneralService;
 import com.hdpros.hdprosbackend.general.Response;
 import com.hdpros.hdprosbackend.general.ResponseConstants;
+import com.hdpros.hdprosbackend.payment.dto.ExportTransfer;
 import com.hdpros.hdprosbackend.user.dto.ProviderResponse;
 import com.hdpros.hdprosbackend.user.model.User;
 import com.hdpros.hdprosbackend.user.service.UserService;
+import com.hdpros.hdprosbackend.utils.ExportUtil;
+import com.hdpros.hdprosbackend.utils.ToExcel;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -24,11 +29,16 @@ import java.util.Optional;
 @Service
 public class GeneralServiceImpl implements GeneralService {
 
+    @Value("${csv.exportBaseName}")
+    private String exportBaseName;
+
     private final Gson gson;
+    private final ExportUtil exportUtil;
     private final UserService userService;
 
-    public GeneralServiceImpl(Gson gson, UserService userService) {
+    public GeneralServiceImpl(Gson gson, ExportUtil exportUtil, UserService userService) {
         this.gson = gson;
+        this.exportUtil = exportUtil;
         this.userService = userService;
     }
 
@@ -153,23 +163,24 @@ public class GeneralServiceImpl implements GeneralService {
         return Optional.of(userService.getProviderDTOResponse(user)).orElseThrow(() -> new GeneralException("Invalid username/email"));
     }
 
-    private void exportSettlement(List<GatewayCashOutView> settlementDtos, TMSUser tmsUser) {
+    private void exportSettlement(List<ExportTransfer> transferList) {
         ToExcel toExcel;
-        toExcel = new ToExcel(GatewayCashOutView.class);
-        String filePath = toExcel.getFileName(tmsUser.getUsername());
+        toExcel = new ToExcel(ExportTransfer.class);
+        String filePath = toExcel.getFileName(exportBaseName);
         try {
             //create file directory
             exportUtil.createDirectory("exports");
-            String excelPath = toExcel.writeExcel(settlementDtos, "Transfer_Report", "exports/" + filePath);
+            String excelPath = toExcel.writeExcel(transferList, "Transfer_Report", "exports/" + filePath);
             //send mail
             if (!excelPath.equals("failed")) {
-                logger.info("sending mail");
-                exportUtil.sendMail(tmsUser, excelPath, "Transfer Transaction Report", "Transfer Transaction");
+                log.info("sending mail");
+                exportUtil.sendEODMail("HDPros", excelPath, "Transfer Transaction",
+                    "Transfer trabsaction report");
             } else {
-                logger.info("excel creation failed");
+                log.info("excel creation failed");
             }
         } catch (Exception e) {
-            logger.info("Error while creating Excel {}", e.getMessage());
+            log.info("Error while creating Excel {}", e.getMessage());
         }
     }
 
