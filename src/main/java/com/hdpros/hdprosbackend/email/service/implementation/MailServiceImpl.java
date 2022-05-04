@@ -73,7 +73,7 @@ public class MailServiceImpl implements MailService {
                 logger.info("Sending mail to ->{}", mail.getMailTo());
                 MimeMessagePreparator messagePreparator = mimeMessage -> {
                     MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
-                    messageHelper.setCc(copy);
+//                    messageHelper.setCc(copy);
                     messageHelper.setBcc(copy);
                     messageHelper.setFrom(mailFrom, mailName);
                     messageHelper.setTo(mailTo);
@@ -148,8 +148,4 @@ public class MailServiceImpl implements MailService {
 
     }
 
-    @Override
-    public void sendMailAttachments(String mailSubject, String mailTo, String[] copy, Map<String, Object> parameters, String templateLocation, Map<String, Objects> attachements) {
-
-    }
 }

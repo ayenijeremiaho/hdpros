@@ -24,6 +24,6 @@ public class UserResponse {
 
     private String address;
 
-    private List<Image> images;
+    private Image images;
 
 }

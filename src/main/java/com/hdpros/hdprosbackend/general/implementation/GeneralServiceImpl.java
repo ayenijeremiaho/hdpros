@@ -182,7 +182,7 @@ public class GeneralServiceImpl implements GeneralService {
             if (!excelPath.equals("failed")) {
                 log.info("sending mail");
                 exportUtil.sendEODMail("HDPros", excelPath, "Transfer Transaction",
-                    "Transfer trabsaction report");
+                    "Transfer transaction report");
             } else {
                 log.info("excel creation failed");
             }

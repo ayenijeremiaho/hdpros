@@ -27,5 +27,5 @@ public class ProviderResponse {
 
     private BvnDetails bvnDetails;
 
-    private List<Image> images;
+    private Image images;
 }

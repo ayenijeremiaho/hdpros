@@ -41,7 +41,7 @@ public class ExportUtil {
 
         params.put("reportName", reportDetails);
         params.put("institutionName", institutionName);
-//        mailService.sendMailAttachments(mailSubject, adminMail, copy, params, "wallet_report_eod_template", null, fileName);
+        mailService.sendMailWithAttachment(mailSubject, adminMail, copy, params, "transfer_transaction",  fileName);
     }
 
     public void deleteAllFilesInFolders(String... folderNames) {
