@@ -8,6 +8,7 @@ import com.hdpros.hdprosbackend.general.Response;
 import com.hdpros.hdprosbackend.general.ResponseConstants;
 import com.hdpros.hdprosbackend.payment.dto.ExportTransfer;
 import com.hdpros.hdprosbackend.user.dto.ProviderResponse;
+import com.hdpros.hdprosbackend.user.dto.UserResponse;
 import com.hdpros.hdprosbackend.user.model.User;
 import com.hdpros.hdprosbackend.user.service.UserService;
 import com.hdpros.hdprosbackend.utils.ExportUtil;
@@ -143,6 +144,12 @@ public class GeneralServiceImpl implements GeneralService {
     public User getUser(String email) {
         log.info("Getting user details for => {}", email);
         return Optional.of(userService.getUserByEmail(email)).orElseThrow(() -> new GeneralException("Invalid username/email"));
+    }
+
+    @Override
+    public UserResponse getUserResponse(User user) {
+        log.info("Getting user details for => {}", user.getEmail());
+        return Optional.of(userService.getUserResponse(user)).orElseThrow(() -> new GeneralException("Invalid username/email"));
     }
 
     @Override

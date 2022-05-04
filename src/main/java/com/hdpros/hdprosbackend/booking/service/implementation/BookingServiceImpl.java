@@ -15,6 +15,7 @@ import com.hdpros.hdprosbackend.room.dto.RoomDTOResponse;
 import com.hdpros.hdprosbackend.room.model.Room;
 import com.hdpros.hdprosbackend.room.service.RoomService;
 import com.hdpros.hdprosbackend.user.dto.ProviderResponse;
+import com.hdpros.hdprosbackend.user.dto.UserResponse;
 import com.hdpros.hdprosbackend.user.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -413,6 +414,11 @@ public class BookingServiceImpl implements BookingService {
 
         BookingDTOResponse bookingDTOResponse = new BookingDTOResponse();
         BeanUtils.copyProperties(booking, bookingDTOResponse);
+
+        //get and set user details to DTO
+        UserResponse userResponse = generalService.getUserResponse(booking.getUser());
+
+        bookingDTOResponse.setUser(userResponse);
 
         if (Objects.nonNull(booking.getProviderId())) {
             User user = generalService.getUser(booking.getProviderId());

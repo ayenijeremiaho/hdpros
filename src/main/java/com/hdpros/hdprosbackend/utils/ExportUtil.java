@@ -18,12 +18,12 @@ public class ExportUtil {
 
     @Value("${mailing-list}")
     private String mailList;
-
-    @Value("${institution.showAdditional.transaction.column}")
-    private String showTransactionAdditionalColumn;
-
-    @Value("${institution.showAdditional.walletTran.column}")
-    private String showWalletTransactionAdditionalColumn;
+//
+//    @Value("${institution.showAdditional.transaction.column}")
+//    private String showTransactionAdditionalColumn;
+//
+//    @Value("${institution.showAdditional.walletTran.column}")
+//    private String showWalletTransactionAdditionalColumn;
 
     public ExportUtil(MailService mailService) {
         this.mailService = mailService;
@@ -41,7 +41,7 @@ public class ExportUtil {
 
         params.put("reportName", reportDetails);
         params.put("institutionName", institutionName);
-        mailService.sendMailAttachments(mailSubject, adminMail, copy, params, "wallet_report_eod_template", null, fileName);
+//        mailService.sendMailAttachments(mailSubject, adminMail, copy, params, "wallet_report_eod_template", null, fileName);
     }
 
     public void deleteAllFilesInFolders(String... folderNames) {

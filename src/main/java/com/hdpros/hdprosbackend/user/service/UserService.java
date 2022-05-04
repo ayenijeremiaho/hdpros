@@ -2,6 +2,7 @@ package com.hdpros.hdprosbackend.user.service;
 
 import com.hdpros.hdprosbackend.user.dto.ProviderResponse;
 import com.hdpros.hdprosbackend.user.dto.UpdatePasswordRequest;
+import com.hdpros.hdprosbackend.user.dto.UserResponse;
 import com.hdpros.hdprosbackend.user.model.User;
 
 public interface UserService {
@@ -20,4 +21,6 @@ public interface UserService {
     User getUserById(Long userId);
 
     ProviderResponse getProviderDTOResponse(User user);
+
+    UserResponse getUserResponse(User user);
 }

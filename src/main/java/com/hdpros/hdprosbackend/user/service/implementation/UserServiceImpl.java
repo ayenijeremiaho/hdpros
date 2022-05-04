@@ -5,6 +5,7 @@ import com.hdpros.hdprosbackend.user.Repository.UserRepository;
 import com.hdpros.hdprosbackend.user.dto.ProviderResponse;
 import com.hdpros.hdprosbackend.user.dto.RegisterUserRequest;
 import com.hdpros.hdprosbackend.user.dto.UpdatePasswordRequest;
+import com.hdpros.hdprosbackend.user.dto.UserResponse;
 import com.hdpros.hdprosbackend.user.model.User;
 import com.hdpros.hdprosbackend.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -70,6 +71,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponse getUserResponse(User user) {
+        log.info("Converting User to User Response for customers");
+
+        UserResponse userResponse = new UserResponse();
+
+        BeanUtils.copyProperties(user, userResponse);
+
+        return userResponse;
+    }
+
+    @Override
     public User saveUser(User user) {
         log.info("Saving user info for {}", user.getEmail());
         return userRepository.save(user);
@@ -92,7 +104,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ProviderResponse getProviderDTOResponse(User user){
+    public ProviderResponse getProviderDTOResponse(User user) {
         log.info("Converting User to Provider DTO Response for provider");
 
         ProviderResponse providerResponse = new ProviderResponse();

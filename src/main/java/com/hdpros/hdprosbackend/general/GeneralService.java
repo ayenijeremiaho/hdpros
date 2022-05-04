@@ -1,6 +1,7 @@
 package com.hdpros.hdprosbackend.general;
 
 import com.hdpros.hdprosbackend.user.dto.ProviderResponse;
+import com.hdpros.hdprosbackend.user.dto.UserResponse;
 import com.hdpros.hdprosbackend.user.model.User;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -33,4 +34,6 @@ public interface GeneralService {
     User getUser(Long userId);
 
     ProviderResponse getProviderDetail(User user);
+
+    UserResponse getUserResponse(User user);
 }
