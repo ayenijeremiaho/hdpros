@@ -65,6 +65,6 @@ public class Scheduler {
             exportTransfer.setAccountName(response.getProvider().getBvnDetails().getAccountNumber());
             exportTransfer.setEmail(response.getProvider().getEmail());
         }
-        return null;
+        return exportTransfer;
     }
 }

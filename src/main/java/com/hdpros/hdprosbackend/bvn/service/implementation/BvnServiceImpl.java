@@ -75,8 +75,11 @@ public class BvnServiceImpl implements BvnService {
             TransferRecipientRequest recipientRequest = new TransferRecipientRequest();
             recipientRequest.setAccount_number(request.getBankAccountNumber());
             recipientRequest.setType("nuban");
-            recipientRequest.setDescription(request.getFirstName() + " " + request.getLastName());
-            recipientRequest.setName("Zombie");
+
+            String name = request.getFirstName() + " " + request.getLastName();
+
+            recipientRequest.setDescription(name);
+            recipientRequest.setName(name);
             recipientRequest.setCurrency("NGN");
             recipientRequest.setBank_code(request.getBankCode());
 
