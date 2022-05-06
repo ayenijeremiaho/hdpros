@@ -3,14 +3,15 @@ package com.hdpros.hdprosbackend.utils;
 import com.google.gson.Gson;
 import com.hdpros.hdprosbackend.exceptions.GeneralException;
 import kong.unirest.json.JSONObject;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -85,17 +86,14 @@ public class ToExcel {
             input = new XSSFWorkbook(new File(excelFilePath));
 
             csvFileName = excelFilePath.replace(".xlsx", ".csv");
-            CSVPrinter output = new CSVPrinter(new FileWriter(csvFileName), CSVFormat.DEFAULT);
+            FileWriter output = new FileWriter(csvFileName);
 
             String tsv = new XSSFExcelExtractor(input).getText();
-            BufferedReader reader = new BufferedReader(new StringReader(tsv));
-            reader.lines().map(line -> line.split("\t")).forEach(strings -> {
-                try {
-                    output.printRecord(strings);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
+
+            String csv = tsv.replaceAll("\t", ",");
+
+            output.write(csv);
+            output.close();
         } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
             throw new GeneralException("Error Creating CSV file {} " + e.getMessage());
@@ -103,6 +101,7 @@ public class ToExcel {
 
         return csvFileName;
     }
+
 
     /**
      * Generate the necessary excel variables

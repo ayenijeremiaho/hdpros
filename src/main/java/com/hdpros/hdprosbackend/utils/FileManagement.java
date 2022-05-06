@@ -18,7 +18,7 @@ public class FileManagement {
 
     public FileManagement(String fileName) {
         String activeDir = System.getProperty("user.dir");
-        activeDir = activeDir + "\\" + fileName;
+        activeDir = activeDir + File.separator + fileName;
         file = new File(activeDir);
     }
 
