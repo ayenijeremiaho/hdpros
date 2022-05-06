@@ -45,7 +45,7 @@ public class User {
     @OneToOne//(fetch = FetchType.LAZY)
     private BvnDetails bvnDetails;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany//(fetch = FetchType.LAZY)
     private List<Image> images;
 
     public void setImages(Image image) {

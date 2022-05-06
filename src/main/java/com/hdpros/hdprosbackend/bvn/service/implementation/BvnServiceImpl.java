@@ -5,11 +5,15 @@ import com.hdpros.hdprosbackend.bvn.model.BvnDetails;
 import com.hdpros.hdprosbackend.bvn.repository.BvnDetailsRepository;
 import com.hdpros.hdprosbackend.bvn.service.BvnService;
 import com.hdpros.hdprosbackend.exceptions.GeneralException;
+import com.hdpros.hdprosbackend.payment.dto.TransferRecipientRequest;
+import com.hdpros.hdprosbackend.payment.dto.TransferRecipientResponse;
 import com.hdpros.hdprosbackend.providers.paystack.PaystackService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
+@Slf4j
 @Service
 public class BvnServiceImpl implements BvnService {
 
@@ -45,7 +49,7 @@ public class BvnServiceImpl implements BvnService {
     }
 
     @Override
-    public BvnDetails getBvnDetailsById(Long id){
+    public BvnDetails getBvnDetailsById(Long id) {
         return bvnDetailsRepository.findById(id).orElseThrow(() -> new GeneralException("Invalid BVN Id"));
     }
 
@@ -66,6 +70,24 @@ public class BvnServiceImpl implements BvnService {
             bvnDetails.setMiddleName(request.getMiddleName());
             bvnDetails.setBlacklisted(bvnData.isBlacklisted());
             bvnDetails.setStatus(VERIFICATION_SUCCESSFUL);
+
+            //create transfer recipient
+            TransferRecipientRequest recipientRequest = new TransferRecipientRequest();
+            recipientRequest.setAccount_number(request.getBankAccountNumber());
+            recipientRequest.setType("nuban");
+            recipientRequest.setDescription(request.getFirstName() + " " + request.getLastName());
+            recipientRequest.setName("Zombie");
+            recipientRequest.setCurrency("NGN");
+            recipientRequest.setBank_code(request.getBankCode());
+
+            log.info("here: " + request.getBankAccountNumber() + " " + request.getBankCode());
+
+            //call service
+            TransferRecipientResponse recipientResponse = paystackService.createTransferRecipient(recipientRequest);
+
+            if (Objects.equals(recipientResponse.getMessage(), "Transfer recipient created successfully")) {
+                bvnDetails.setRecipientCode(recipientResponse.getTransferRecipientData().getRecipient_code());
+            }
         }
 
         return bvnDetailsRepository.save(bvnDetails);
@@ -80,7 +102,7 @@ public class BvnServiceImpl implements BvnService {
                 .build();
     }
 
-    private BvnCustomerResponse failedBVNVerification(){
+    private BvnCustomerResponse failedBVNVerification() {
         return BvnCustomerResponse.builder()
                 .Status(VERIFICATION_FAILED)
                 .isBlacklisted(false)

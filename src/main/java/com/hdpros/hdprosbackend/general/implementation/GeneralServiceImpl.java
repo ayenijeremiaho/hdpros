@@ -30,12 +30,11 @@ import java.util.Optional;
 @Service
 public class GeneralServiceImpl implements GeneralService {
 
-    @Value("${csv.exportBaseName}")
-    private String exportBaseName;
-
     private final Gson gson;
     private final ExportUtil exportUtil;
     private final UserService userService;
+    @Value("${csv.exportBaseName}")
+    private String exportBaseName;
 
     public GeneralServiceImpl(Gson gson, ExportUtil exportUtil, UserService userService) {
         this.gson = gson;
@@ -170,7 +169,8 @@ public class GeneralServiceImpl implements GeneralService {
         return Optional.of(userService.getProviderDTOResponse(user)).orElseThrow(() -> new GeneralException("Invalid username/email"));
     }
 
-    private void exportSettlement(List<ExportTransfer> transferList) {
+    @Override
+    public void exportSettlement(List<ExportTransfer> transferList, String transactionDay) {
         ToExcel toExcel;
         toExcel = new ToExcel(ExportTransfer.class);
         String filePath = toExcel.getFileName(exportBaseName);
@@ -181,8 +181,7 @@ public class GeneralServiceImpl implements GeneralService {
             //send mail
             if (!excelPath.equals("failed")) {
                 log.info("sending mail");
-                exportUtil.sendEODMail("HDPros", excelPath, "Transfer Transaction",
-                    "Transfer transaction report");
+                exportUtil.sendEODMail("HDPros", excelPath, "Transfer Transaction", transactionDay);
             } else {
                 log.info("excel creation failed");
             }

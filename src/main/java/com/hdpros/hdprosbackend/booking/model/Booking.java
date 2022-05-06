@@ -41,10 +41,10 @@ public class Booking extends BaseEntity {
     private boolean paid = false;
 
     @Column(name = "in_progress", columnDefinition = "boolean default false")
-    private boolean in_progress = false;
+    private boolean inProgress = false;
 
     @Column(name = "processing_payment", columnDefinition = "boolean default false")
-    private boolean processing_payment = false;
+    private boolean processingPayment = false;
 
     @Column(name = "completed", columnDefinition = "boolean default false")
     private boolean completed = false;
@@ -66,7 +66,7 @@ public class Booking extends BaseEntity {
 
     private LocalDateTime transferDate;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany//(fetch = FetchType.LAZY)
     private List<Room> rooms;
 
     public void setRooms(Room room) {

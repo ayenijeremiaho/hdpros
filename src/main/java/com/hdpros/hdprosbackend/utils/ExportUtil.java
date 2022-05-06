@@ -5,6 +5,7 @@ import com.hdpros.hdprosbackend.user.model.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,12 +35,12 @@ public class ExportUtil {
         fileManagement.createDirectory();
     }
 
-    public void sendEODMail(String institutionName, String fileName, String mailSubject, String reportDetails) {
+    public void sendEODMail(String institutionName, String fileName, String mailSubject, String transactionDay) {
         String[] copy = mailList.split(",");
 
         Map<String, Object> params = new HashMap<>();
 
-        params.put("reportName", reportDetails);
+        params.put("transactionDay", transactionDay);
         params.put("institutionName", institutionName);
         mailService.sendMailWithAttachment(mailSubject, adminMail, copy, params, "transfer_transaction",  fileName);
     }

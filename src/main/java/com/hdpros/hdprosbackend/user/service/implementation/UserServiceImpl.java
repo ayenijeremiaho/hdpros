@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
     public boolean updatePassword(String email, UpdatePasswordRequest request) {
         User user = getUserByEmail(email);
 
-        user.setChangePassword(false);
+        user.setChangePassword(true);
         user.setPassword(new BCryptPasswordEncoder().encode(request.getNewPassword()));
 
         userRepository.save(user);
@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
     public boolean changePassword(String email, String password) {
         User user = getUserByEmail(email);
 
-        user.setChangePassword(true);
+        user.setChangePassword(false);
         user.setPassword(new BCryptPasswordEncoder().encode(password));
 
         userRepository.save(user);

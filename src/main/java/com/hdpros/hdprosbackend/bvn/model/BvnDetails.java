@@ -28,4 +28,6 @@ public class BvnDetails {
     private boolean isBlacklisted = false;
 
     private String status;
+
+    private String recipientCode;
 }

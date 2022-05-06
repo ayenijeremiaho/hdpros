@@ -1,5 +1,6 @@
 package com.hdpros.hdprosbackend.general;
 
+import com.hdpros.hdprosbackend.payment.dto.ExportTransfer;
 import com.hdpros.hdprosbackend.user.dto.ProviderResponse;
 import com.hdpros.hdprosbackend.user.dto.UserResponse;
 import com.hdpros.hdprosbackend.user.model.User;
@@ -8,6 +9,7 @@ import kong.unirest.JsonNode;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 
 public interface GeneralService {
     String getAsString(Object o);
@@ -36,4 +38,6 @@ public interface GeneralService {
     ProviderResponse getProviderDetail(User user);
 
     UserResponse getUserResponse(User user);
+
+    void exportSettlement(List<ExportTransfer> transferList, String transactionDay);
 }

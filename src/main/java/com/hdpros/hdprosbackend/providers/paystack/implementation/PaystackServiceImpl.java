@@ -13,12 +13,14 @@ import com.hdpros.hdprosbackend.providers.paystack.PaystackService;
 import com.hdpros.hdprosbackend.utils.http.HttpService;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+@Slf4j
 @Service
 public class PaystackServiceImpl implements PaystackService {
 
@@ -98,13 +100,17 @@ public class PaystackServiceImpl implements PaystackService {
 
     @Override
     public TransferRecipientResponse createTransferRecipient(TransferRecipientRequest recipientRequest) {
-        Map<String, String> headers = getHeaderListForm();
+        Map<String, String> headers = getHeaderList();
         String requestBody = generalService.getAsString(recipientRequest);
         String url = getUrl(RECIPIENT);
 
         HttpResponse<JsonNode> responseObject = httpService.post(headers, requestBody, url);
 
+        log.info(requestBody);
+
         String response = generalService.getResponseAsString(responseObject);
+
+        log.info(response);
 
         return gson.fromJson(response, TransferRecipientResponse.class);
     }
