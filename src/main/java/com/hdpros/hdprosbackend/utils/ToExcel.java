@@ -88,7 +88,9 @@ public class ToExcel {
             csvFileName = excelFilePath.replace(".xlsx", ".csv");
             FileWriter output = new FileWriter(csvFileName);
 
-            String tsv = new XSSFExcelExtractor(input).getText();
+            XSSFExcelExtractor xssfExcelExtractor = new XSSFExcelExtractor(input);
+            xssfExcelExtractor.setIncludeSheetNames(false);
+            String tsv = xssfExcelExtractor.getText();
 
             String csv = tsv.replaceAll("\t", ",");
 
