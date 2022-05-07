@@ -66,7 +66,7 @@ public class Booking extends BaseEntity {
 
     private LocalDateTime transferDate;
 
-    @ManyToMany//(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Room> rooms;
 
     public void setRooms(Room room) {

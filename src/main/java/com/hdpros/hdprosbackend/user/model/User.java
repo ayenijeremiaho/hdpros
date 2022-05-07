@@ -42,10 +42,10 @@ public class User {
     @Column(name = "changePassword", columnDefinition = "boolean default false")
     private boolean changePassword;
 
-    @OneToOne//(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     private BvnDetails bvnDetails;
 
-    @OneToMany//(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY)
     private List<Image> images;
 
     public void setImages(Image image) {

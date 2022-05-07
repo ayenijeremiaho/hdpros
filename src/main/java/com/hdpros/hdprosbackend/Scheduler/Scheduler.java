@@ -43,7 +43,9 @@ public class Scheduler {
 
         LocalDate localDate = LocalDate.now();
 
-        generalService.exportSettlement(transferList, localDate.minusDays(1).toString());
+        if (transferList.stream().count() > 0) {
+            generalService.exportSettlement(transferList, localDate.minusDays(1).toString());
+        }
     }
 
     private ExportTransfer convertBookingToExportTransfer(Booking booking) {
@@ -59,7 +61,7 @@ public class Scheduler {
         exportTransfer.setRecipientCode(response.getProvider().getBvnDetails().getRecipientCode());
 
         //get other info if recipient code is null
-        if (Objects.isNull(response.getProvider().getBvnDetails().getRecipientCode())){
+        if (Objects.isNull(response.getProvider().getBvnDetails().getRecipientCode())) {
             exportTransfer.setBankCode(response.getProvider().getBvnDetails().getBankCode());
             exportTransfer.setAccountNumber(response.getProvider().getBvnDetails().getAccountNumber());
             exportTransfer.setAccountName(response.getProvider().getBvnDetails().getAccountNumber());

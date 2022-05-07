@@ -27,12 +27,12 @@ public class Room extends BaseEntity {
 
     private String description;
 
-    @ManyToOne(optional = false)//, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
 
     private boolean delFlag = false;
 
-    @OneToMany //(fetch = FetchType.LAZY)
+    @OneToMany (fetch = FetchType.LAZY)
     private List<Image> images;
 
     public void setImages(Image image) {
