@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class ExportTransfer {
 
-    private Double amount;
+    private Double transferAmount;
 
     private String transferNote;
 
@@ -13,12 +13,12 @@ public class ExportTransfer {
 
     private String recipientCode;
 
-    private String bankCode;
+    private String bankCodeOrSlug;
 
     private String accountNumber;
 
     private String accountName;
 
-    private String email;
+    private String emailAddress;
 
 }

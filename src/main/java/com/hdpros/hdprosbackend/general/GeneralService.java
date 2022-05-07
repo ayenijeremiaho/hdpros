@@ -39,5 +39,5 @@ public interface GeneralService {
 
     UserResponse getUserResponse(User user);
 
-    void exportSettlement(List<ExportTransfer> transferList, String transactionDay);
+    boolean exportSettlement(List<ExportTransfer> transferList, String transactionDay);
 }

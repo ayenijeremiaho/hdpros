@@ -170,7 +170,7 @@ public class GeneralServiceImpl implements GeneralService {
     }
 
     @Override
-    public void exportSettlement(List<ExportTransfer> transferList, String transactionDay) {
+    public boolean exportSettlement(List<ExportTransfer> transferList, String transactionDay) {
         ToExcel toExcel;
         toExcel = new ToExcel(ExportTransfer.class);
         String filePath = toExcel.getFileName(exportBaseName);
@@ -182,12 +182,19 @@ public class GeneralServiceImpl implements GeneralService {
             if (!excelPath.equals("failed")) {
                 log.info("sending mail");
                 exportUtil.sendEODMail("HDPros", excelPath, "Transfer Transaction", transactionDay);
+
+                return true;
             } else {
                 log.info("excel creation failed");
+
+                return false;
             }
         } catch (Exception e) {
             log.info("Error while creating Excel {}", e.getMessage());
+
+            return false;
         }
+
     }
 
 }

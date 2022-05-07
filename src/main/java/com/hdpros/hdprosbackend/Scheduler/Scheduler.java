@@ -44,11 +44,14 @@ public class Scheduler {
         LocalDate localDate = LocalDate.now();
 
         if (transferList.stream().count() > 0) {
-            generalService.exportSettlement(transferList, localDate.minusDays(1).toString());
+            if (generalService.exportSettlement(transferList, localDate.minusDays(1).toString())) {
+
+                //update booking just sent for payment processing
+                bookingService.updateSendTransaction(completedBookings, "processing_payment");
+
+            }
         }
 
-        //update booking just sent for payment processing
-        bookingService.updateSendTransaction(completedBookings, "processing_payment");
     }
 
     private ExportTransfer convertBookingToExportTransfer(Booking booking) {
@@ -58,17 +61,22 @@ public class Scheduler {
 
         BookingDTOResponse response = bookingService.getBookingDTOResponseForProvider(booking);
 
-        exportTransfer.setAmount(response.getAmount());
-        exportTransfer.setTransferNote("settlement for customer " + response.getUser().getFirstName() + " with email: " + response.getUser().getEmail());
-        exportTransfer.setTransferReference("Booking ID: " + response.getId() + " with description " + response.getDescription());
+        exportTransfer.setTransferAmount(response.getAmount());
+        exportTransfer.setTransferNote("settlement for customer " + response.getUser().getFirstName() + " with email: " + response.getUser().getEmail() + "booking id " + response.getId());
+        exportTransfer.setTransferReference("");
         exportTransfer.setRecipientCode(response.getProvider().getBvnDetails().getRecipientCode());
 
         //get other info if recipient code is null
         if (Objects.isNull(response.getProvider().getBvnDetails().getRecipientCode())) {
-            exportTransfer.setBankCode(response.getProvider().getBvnDetails().getBankCode());
+            exportTransfer.setBankCodeOrSlug(response.getProvider().getBvnDetails().getBankCode());
             exportTransfer.setAccountNumber(response.getProvider().getBvnDetails().getAccountNumber());
-            exportTransfer.setAccountName(response.getProvider().getBvnDetails().getAccountNumber());
-            exportTransfer.setEmail(response.getProvider().getEmail());
+
+            //get firstname & lastname
+            String firstname = response.getProvider().getBvnDetails().getFirstName();
+            String lastname = response.getProvider().getBvnDetails().getLastName();
+
+            exportTransfer.setAccountName(firstname + " " + lastname);
+            exportTransfer.setEmailAddress(response.getProvider().getEmail());
         }
         return exportTransfer;
     }
