@@ -1,11 +1,13 @@
 package com.hdpros.hdprosbackend.bvn.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import javax.persistence.*;
 
 @Entity
 @Data
+@JsonIgnoreProperties("hibernateLazyInitializer")
 public class BvnDetails {
 
     @Id
