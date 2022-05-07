@@ -43,7 +43,7 @@ public class Scheduler {
 
         LocalDate localDate = LocalDate.now();
 
-        if (transferList.stream().count() > 0) {
+        if ((long) transferList.size() > 0) {
             if (generalService.exportSettlement(transferList, localDate.minusDays(1).toString())) {
 
                 //update booking just sent for payment processing
@@ -62,7 +62,7 @@ public class Scheduler {
         BookingDTOResponse response = bookingService.getBookingDTOResponseForProvider(booking);
 
         exportTransfer.setTransferAmount(response.getAmount());
-        exportTransfer.setTransferNote("settlement for customer " + response.getUser().getFirstName() + " with email: " + response.getUser().getEmail() + "booking id " + response.getId());
+        exportTransfer.setTransferNote("settlement for customer " + response.getUser().getFirstName() + " with email: " + response.getUser().getEmail() + " booking id " + response.getId());
         exportTransfer.setTransferReference("");
         exportTransfer.setRecipientCode(response.getProvider().getBvnDetails().getRecipientCode());
 
