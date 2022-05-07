@@ -46,6 +46,9 @@ public class Scheduler {
         if (transferList.stream().count() > 0) {
             generalService.exportSettlement(transferList, localDate.minusDays(1).toString());
         }
+
+        //update booking just sent for payment processing
+        bookingService.updateSendTransaction(completedBookings, "processing_payment");
     }
 
     private ExportTransfer convertBookingToExportTransfer(Booking booking) {

@@ -122,7 +122,7 @@ public class MailServiceImpl implements MailService {
                     messageHelper.setSubject(mailSubject);
                     messageHelper.setText(mail.getMailContent(), true);
                     if (Objects.nonNull(copy)) {
-                        messageHelper.setCc(copy);
+                        messageHelper.setBcc(copy);
                     }
 
                     FileSystemResource file = new FileSystemResource(new File(filePath));
