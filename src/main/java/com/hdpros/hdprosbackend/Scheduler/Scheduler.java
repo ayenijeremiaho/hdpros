@@ -34,7 +34,7 @@ public class Scheduler {
         List<Booking> processingPaymentBookings = bookingService.getCompletedBooking("processing_payment");
 
         //update booking already sent for payment processing to completed
-        bookingService.updateSendTransaction(processingPaymentBookings, "completed");
+        bookingService.updateSendTransaction(processingPaymentBookings, "completed", null);
 
         //get bookings that are completed
         List<Booking> completedBookings = bookingService.getCompletedBooking("done");
@@ -47,7 +47,7 @@ public class Scheduler {
             if (generalService.exportSettlement(transferList, localDate.minusDays(1).toString())) {
 
                 //update booking just sent for payment processing
-                bookingService.updateSendTransaction(completedBookings, "processing_payment");
+                bookingService.updateSendTransaction(completedBookings, "processing_payment", transferList.stream().peek(ExportTransfer::getRecipientCode).toString());
 
             }
         }

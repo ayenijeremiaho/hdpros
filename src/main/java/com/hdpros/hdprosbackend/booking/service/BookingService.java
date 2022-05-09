@@ -36,7 +36,7 @@ public interface BookingService {
 
     void updateCompletedBooking(List<Booking> bookings);
 
-    void updateSendTransaction(List<Booking> bookings, String param);
+    void updateSendTransaction(List<Booking> bookings, String param, String transRef);
 
     BookingDTOResponse getBookingDTOResponseForProvider(Booking booking);
 }
