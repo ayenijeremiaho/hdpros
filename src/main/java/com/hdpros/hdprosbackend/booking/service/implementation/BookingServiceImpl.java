@@ -394,11 +394,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void updateSendTransaction(List<Booking> bookings, String param, String transRef) {
+    public void updateSendTransaction(List<Booking> bookings, String param) {
         log.info("Update booking that are completed");
 
         if (param.equals("processing_payment")) {
-            bookings = bookings.stream().peek(booking -> booking.setProcessingPayment(true)).peek(booking -> booking.setTransferDate(LocalDateTime.now())).peek(booking -> booking.setTransferReference(transRef)).collect(Collectors.toList());
+            bookings = bookings.stream().peek(booking -> booking.setProcessingPayment(true)).peek(booking -> booking.setTransferDate(LocalDateTime.now())).peek(booking -> booking.setTransferReference(generalService.getProviderDetail(generalService.getUser(booking.getProviderId())).getBvnDetails().getRecipientCode() + "_" + booking.getPaymentReference() + "_" + booking.getId())).collect(Collectors.toList());
             bookingRepository.saveAll(bookings);
         } else if (param.equals("completed")) {
             bookings = bookings.stream().peek(booking -> booking.setCompleted(true)).collect(Collectors.toList());

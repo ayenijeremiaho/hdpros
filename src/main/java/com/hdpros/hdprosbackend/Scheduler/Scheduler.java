@@ -34,7 +34,7 @@ public class Scheduler {
         List<Booking> processingPaymentBookings = bookingService.getCompletedBooking("processing_payment");
 
         //update booking already sent for payment processing to completed
-        bookingService.updateSendTransaction(processingPaymentBookings, "completed", null);
+        bookingService.updateSendTransaction(processingPaymentBookings, "completed");
 
         //get bookings that are completed
         List<Booking> completedBookings = bookingService.getCompletedBooking("done");
@@ -47,7 +47,7 @@ public class Scheduler {
             if (generalService.exportSettlement(transferList, localDate.minusDays(1).toString())) {
 
                 //update booking just sent for payment processing
-                bookingService.updateSendTransaction(completedBookings, "processing_payment", transferList.stream().peek(ExportTransfer::getRecipientCode).toString());
+                bookingService.updateSendTransaction(completedBookings, "processing_payment");
 
             }
         }
@@ -63,8 +63,9 @@ public class Scheduler {
 
         exportTransfer.setTransferAmount(response.getAmount());
         exportTransfer.setTransferNote("settlement for customer " + response.getUser().getFirstName() + " with email: " + response.getUser().getEmail() + " booking id " + response.getId());
-        exportTransfer.setTransferReference("");
+        exportTransfer.setTransferReference(response.getProvider().getBvnDetails().getRecipientCode()+"_"+response.getId());
         exportTransfer.setRecipientCode(response.getProvider().getBvnDetails().getRecipientCode());
+        exportTransfer.setEmailAddress(response.getProvider().getEmail());
 
         //get other info if recipient code is null
         if (Objects.isNull(response.getProvider().getBvnDetails().getRecipientCode())) {
@@ -76,7 +77,6 @@ public class Scheduler {
             String lastname = response.getProvider().getBvnDetails().getLastName();
 
             exportTransfer.setAccountName(firstname + " " + lastname);
-            exportTransfer.setEmailAddress(response.getProvider().getEmail());
         }
         return exportTransfer;
     }
