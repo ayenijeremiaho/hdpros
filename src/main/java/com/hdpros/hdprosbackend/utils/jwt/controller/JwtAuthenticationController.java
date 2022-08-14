@@ -12,12 +12,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Locale;
 import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1/authenticate")
 @CrossOrigin
-//@RequestMapping(value = "/api/v1/authenticate", method = RequestMethod.POST)
 public class JwtAuthenticationController {
 
     private final AuthenticationManager authenticationManager;
@@ -36,9 +36,9 @@ public class JwtAuthenticationController {
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest)
             throws Exception {
 
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-
-        final UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        authenticate(authenticationRequest.getUsername().toLowerCase(Locale.ROOT), authenticationRequest.getPassword());
+        System.out.println("here: " + authenticationRequest.getUsername().toLowerCase(Locale.ROOT));
+        final UserDetails userDetails = jwtUserDetailsService.loadUserByUsername(authenticationRequest.getUsername().toLowerCase(Locale.ROOT));
 
         final String token = jwtTokenUtil.generateToken(userDetails);
 
