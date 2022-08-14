@@ -15,10 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -77,7 +74,7 @@ public class LoginServiceImpl implements LoginService {
         log.info("Getting user info");
 
         //verify if email exist
-        User user = userService.getUserByEmail(request.getUsername());
+        User user = userService.getUserByEmail(request.getUsername().toLowerCase(Locale.ROOT));
 
         if (Objects.isNull(user)) {
             throw new GeneralException("User does not exist!!!");
