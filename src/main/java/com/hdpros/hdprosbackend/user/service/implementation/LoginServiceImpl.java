@@ -82,7 +82,8 @@ public class LoginServiceImpl implements LoginService {
         return user;
     }
 
-    private String getProfileImage(Long userId) {
+    @Override
+    public String getProfileImage(Long userId) {
         Image image = imageService.getProfileImage(userId);
 
         return Objects.nonNull(image) ? image.getUrl() : null;

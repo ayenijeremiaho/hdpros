@@ -10,6 +10,7 @@ import com.hdpros.hdprosbackend.payment.dto.ExportTransfer;
 import com.hdpros.hdprosbackend.user.dto.ProviderResponse;
 import com.hdpros.hdprosbackend.user.dto.UserResponse;
 import com.hdpros.hdprosbackend.user.model.User;
+import com.hdpros.hdprosbackend.user.service.LoginService;
 import com.hdpros.hdprosbackend.user.service.UserService;
 import com.hdpros.hdprosbackend.utils.ExportUtil;
 import com.hdpros.hdprosbackend.utils.ToExcel;
@@ -33,13 +34,15 @@ public class GeneralServiceImpl implements GeneralService {
     private final Gson gson;
     private final ExportUtil exportUtil;
     private final UserService userService;
+    private final LoginService loginService;
     @Value("${csv.exportBaseName}")
     private String exportBaseName;
 
-    public GeneralServiceImpl(Gson gson, ExportUtil exportUtil, UserService userService) {
+    public GeneralServiceImpl(Gson gson, ExportUtil exportUtil, UserService userService, LoginService loginService) {
         this.gson = gson;
         this.exportUtil = exportUtil;
         this.userService = userService;
+        this.loginService = loginService;
     }
 
     //Used to format object into a string
@@ -195,6 +198,12 @@ public class GeneralServiceImpl implements GeneralService {
             return false;
         }
 
+    }
+
+    @Override
+    public String getAvatar(Long userId) {
+        log.info("Getting user avatar for => {}", userId);
+        return Optional.of(loginService.getProfileImage(userId)).orElseThrow(() -> new GeneralException("Invalid username/email"));
     }
 
 }

@@ -26,4 +26,6 @@ public class UserResponse {
 
     private Image images;
 
+    private String avatar;
+
 }

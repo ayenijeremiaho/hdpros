@@ -37,6 +37,7 @@ public class BookingServiceImpl implements BookingService {
     private final PlaceService placeService;
     private final GeneralService generalService;
     private final BookingRepository bookingRepository;
+
     @Value("${record.count}")
     private int count;
 

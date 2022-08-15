@@ -40,4 +40,7 @@ public interface GeneralService {
     UserResponse getUserResponse(User user);
 
     boolean exportSettlement(List<ExportTransfer> transferList, String transactionDay);
+
+    String getAvatar(Long userId);
+
 }

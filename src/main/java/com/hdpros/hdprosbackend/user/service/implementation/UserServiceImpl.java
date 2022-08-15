@@ -7,9 +7,11 @@ import com.hdpros.hdprosbackend.user.dto.RegisterUserRequest;
 import com.hdpros.hdprosbackend.user.dto.UpdatePasswordRequest;
 import com.hdpros.hdprosbackend.user.dto.UserResponse;
 import com.hdpros.hdprosbackend.user.model.User;
+import com.hdpros.hdprosbackend.user.service.LoginService;
 import com.hdpros.hdprosbackend.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +21,11 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private final LoginService loginService;
     private final UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(@Lazy LoginService loginService, UserRepository userRepository) {
+        this.loginService = loginService;
         this.userRepository = userRepository;
     }
 
@@ -76,6 +80,9 @@ public class UserServiceImpl implements UserService {
 
         UserResponse userResponse = new UserResponse();
 
+        //get avatar
+        userResponse.setAvatar(loginService.getProfileImage(user.getId()));
+
         BeanUtils.copyProperties(user, userResponse);
 
         return userResponse;
@@ -109,6 +116,9 @@ public class UserServiceImpl implements UserService {
 
         ProviderResponse providerResponse = new ProviderResponse();
         BeanUtils.copyProperties(user, providerResponse);
+
+        //get avatar
+        providerResponse.setAvatar(loginService.getProfileImage(user.getId()));
 
         return providerResponse;
     }

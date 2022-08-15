@@ -28,4 +28,7 @@ public class ProviderResponse {
     private BvnDetails bvnDetails;
 
     private Image images;
+
+    private String avatar;
+
 }

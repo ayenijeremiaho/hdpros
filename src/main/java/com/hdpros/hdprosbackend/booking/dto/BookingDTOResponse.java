@@ -38,4 +38,5 @@ public class BookingDTOResponse {
     private ProviderResponse provider;
 
     private UserResponse user;
+
 }
